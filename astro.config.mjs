@@ -2,7 +2,7 @@ import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://techcamargo.com.br',
+  site: 'http://techcamargo.com.br',
   compressHTML: true,
   server: {
     host: true,
