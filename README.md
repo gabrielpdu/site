@@ -2,6 +2,8 @@
 
 Site institucional e comercial de alta performance para a assistência técnica **CamargoTech**, especializada em celulares, notebooks, PCs e eletrônicos.
 
+[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/gabrielpdu/site)
+
 Desenvolvido com foco em **performance radical, segurança por padrão e acessibilidade universal (WCAG AA)**, atendendo rigorosamente às especificações do [camargotech-prompt.md.md](camargotech-prompt.md.md).
 
 ---
