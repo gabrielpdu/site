@@ -1,0 +1,153 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import ReadingProgress from '../components/ReadingProgress.astro';
+import Toast from '../components/Toast.astro';
+
+import '../styles/tokens.css';
+import '../styles/base.css';
+import '../styles/utilities.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  activePage?: string;
+}
+
+const {
+  title = "CamargoTech | Assistência Técnica de Celulares e Computadores",
+  description = "CamargoTech — conserto de celulares, notebooks e PCs com garantia, agilidade e confiança.",
+  activePage = "inicio"
+} = Astro.props;
+
+const siteUrl = "https://techcamargo.com.br";
+const canonicalURL = new URL(Astro.url.pathname, siteUrl).toString();
+
+const schemaJsonLD = {
+  "@context": "https://schema.org",
+  "@type": "LocalBusiness",
+  "name": "CamargoTech",
+  "image": `${siteUrl}/og-image.png`,
+  "url": siteUrl,
+  "telephone": "+55-44-98842-4935",
+  "email": "techcamargo@techcamargo.com.br",
+  "priceRange": "$$",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Rua das Tecnologias, 500",
+    "addressLocality": "São Paulo",
+    "addressRegion": "SP",
+    "postalCode": "01000-000",
+    "addressCountry": "BR"
+  },
+  "openingHoursSpecification": [{
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"],
+    "opens": "08:30",
+    "closes": "18:30"
+  }, {
+    "@type": "OpeningHoursSpecification",
+    "dayOfWeek": ["Saturday"],
+    "opens": "09:00",
+    "closes": "13:00"
+  }],
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "580"
+  }
+};
+---
+
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#FF6B1A" />
+
+    <!-- SEO Meta Tags -->
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonicalURL} />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${siteUrl}/og-image.png`} />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}/og-image.png`} />
+
+    <!-- Favicon & PWA Manifest -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
+    <!-- Typography (Inter Google Fonts) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+
+    <!-- Schema.org JSON-LD -->
+    <script type="application/ld+json" set:html={JSON.stringify(schemaJsonLD)} />
+
+    <!-- Prevent Theme Flash -->
+    <script is:inline>
+      const savedTheme = localStorage.getItem('camargotech_theme');
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      document.documentElement.setAttribute('data-theme', savedTheme || (prefersDark ? 'dark' : 'light'));
+    </script>
+  </head>
+  <body>
+    <!-- Skip to main content for accessibility -->
+    <a href="#main-content" class="skip-link">Pular para o conteúdo principal</a>
+
+    <!-- Reading Progress Bar -->
+    <ReadingProgress />
+
+    <!-- Header Navigation -->
+    <Header activePage={activePage} />
+
+    <!-- Main Content -->
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <Footer />
+
+    <!-- Floating WhatsApp -->
+    <WhatsAppButton />
+
+    <!-- Cookie Consent Banner -->
+    <CookieBanner />
+
+    <!-- Toast Notification -->
+    <Toast />
+
+    <!-- Initialize Scripts -->
+    <script>
+      import { initTheme } from '../scripts/theme';
+      initTheme();
+
+      // Register PWA service worker
+      if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(err => {
+            console.info('SW not loaded in local environment:', err);
+          });
+        });
+      }
+    </script>
+  </body>
+</html>

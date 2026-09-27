@@ -1,0 +1,22 @@
+{
+  "name": "camargotech",
+  "type": "module",
+  "version": "1.0.0",
+  "private": true,
+  "description": "CamargoTech - Assistência Técnica Especializada em Celulares, Notebooks e PCs",
+  "scripts": {
+    "dev": "astro dev --host 0.0.0.0 --port 4321",
+    "start": "astro dev --host 0.0.0.0 --port 4321",
+    "build": "astro build",
+    "preview": "astro preview --host 0.0.0.0 --port 4321"
+  },
+  "dependencies": {
+    "astro": "^5.4.2",
+    "alpinejs": "^3.14.8",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/alpinejs": "^3.13.11",
+    "typescript": "^5.8.2"
+  }
+}

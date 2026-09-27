@@ -1,0 +1,228 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Hero from '../components/Hero.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import ServiceModal from '../components/ServiceModal.astro';
+import HowItWorks from '../components/HowItWorks.astro';
+import Testimonials from '../components/Testimonials.astro';
+import ContactForm from '../components/ContactForm.astro';
+import FAQ from '../components/FAQ.astro';
+import Map from '../components/Map.astro';
+
+const services = [
+  {
+    id: "celulares",
+    title: "Conserto de Celulares",
+    description: "Reparo especializado em iPhone, Samsung, Xiaomi e Motorola. Troca de telas, baterias e circuitos de carga.",
+    turnaround: "1 a 3 dias",
+    priceRange: "R$ 80 – R$ 900",
+    iconType: "mobile",
+    features: ["Telas OLED e LCD originais", "Substituição de bateria com garantia", "Reparo de conectores Tipo-C e Lightning", "Desoxidação pós-contato com líquidos"],
+    details: "Laboratório próprio equipado com microscópios ópticos e estações de solda microeletrônica para recuperação de placas com curto ou danos por água.",
+    includes: ["Triagem e testes de componentes", "Vedação de proteção original", "Garantia de 90 dias por escrito", "Laudo fotográfico do antes e depois"]
+  },
+  {
+    id: "notebooks",
+    title: "Conserto de Notebooks e PCs",
+    description: "Assistência completa em Dell, Lenovo, Acer, ASUS, HP e computadores desktop para escritório e games.",
+    turnaround: "2 a 5 dias",
+    priceRange: "R$ 120 – R$ 1500",
+    iconType: "laptop",
+    features: ["Reparo de placa-mãe e curto-circuito", "Troca de teclado e dobradiças", "Substituição de cooler e carcaça", "Correção de lentidão e travamentos"],
+    details: "Diagnóstico profundo com osciloscópio e fontes de bancada para encontrar falhas de alimentação e reballing/solda BGA.",
+    includes: ["Desmontagem cuidadosa e higienização", "Peças novas com procedência", "Instalação de drivers certificados", "Testes de benchmark de estresse"]
+  },
+  {
+    id: "formatacao",
+    title: "Formatação e Instalação",
+    description: "Reinstalação limpa do Windows ou Linux com backup seguro dos seus documentos, fotos e programas essenciais.",
+    turnaround: "1 dia",
+    priceRange: "R$ 80 – R$ 200",
+    iconType: "disc",
+    features: ["Backup integral prévio", "Instalação de Windows 11/10 original", "Otimização de inicialização", "Pacote office e antivírus configurado"],
+    details: "Garantimos que nenhum arquivo seu será perdido. Fazemos a cópia de segurança em discos espelhados e higienizamos vírus e malwares.",
+    includes: ["Backup de fotos e documentos", "Windows atualizado na última versão", "Drivers oficiais do fabricante", "Suporte pós-instalação de 15 dias"]
+  },
+  {
+    id: "dados",
+    title: "Recuperação de Dados",
+    description: "Recuperamos arquivos de HDs corrompidos, SSDs com falha de leitura, pen drives e cartões de memória danificados.",
+    turnaround: "2 a 7 dias",
+    priceRange: "R$ 200 – R$ 2000",
+    iconType: "database",
+    features: ["Recuperação lógica e física", "Tratamento de bad blocks", "Recuperação de partição deletada", "Total sigilo profissional"],
+    details: "Trabalhamos com ferramentas forenses e estações limpas para recuperar fotos de família, planilhas corporativas e bancos de dados perdidos.",
+    includes: ["Análise de integridade do disco", "Lista prévia de arquivos recuperáveis", "Armazenamento seguro em disco de entrega", "Termo de sigilo e destruição segura"]
+  }
+];
+---
+
+<BaseLayout 
+  title="CamargoTech | Assistência Técnica de Celulares e Computadores" 
+  description="Conserto de celulares, notebooks e PCs com garantia, agilidade e confiança. Atendimento transparente e orçamento sem compromisso."
+  activePage="inicio"
+>
+  <!-- Hero Section -->
+  <Hero />
+
+  <!-- Services Preview Grid -->
+  <section class="section" id="servicos">
+    <div class="container">
+      <div class="section-head">
+        <span class="badge badge-orange">Nossas Especialidades</span>
+        <h2>Serviços em Destaque</h2>
+        <p>Soluções completas com equipamentos modernos e técnicos especialistas prontos para resolver seu problema.</p>
+      </div>
+
+      <div class="grid-4">
+        {services.map((s) => (
+          <ServiceCard 
+            id={s.id}
+            title={s.title}
+            description={s.description}
+            turnaround={s.turnaround}
+            priceRange={s.priceRange}
+            iconType={s.iconType}
+            features={s.features}
+          />
+        ))}
+      </div>
+
+      <div style="text-align: center; margin-top: 3rem;">
+        <a href="/servicos" class="btn btn-secondary">
+          <span>Ver Tabela Completa de Serviços & Preços</span>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+            <polyline points="12 5 19 12 12 19"></polyline>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works (Timeline) -->
+  <HowItWorks />
+
+  <!-- Testimonials Carousel -->
+  <Testimonials />
+
+  <!-- Direct Quote Section -->
+  <section class="section section-alt" id="orcamento">
+    <div class="container">
+      <div class="quote-grid">
+        <div class="quote-info">
+          <span class="badge badge-green">Agilidade e Eficiência</span>
+          <h2>Pronto para Consertar seu Equipamento?</h2>
+          <p class="lead-text">
+            Nossos técnicos analisam seu problema com atenção individual. Envie os detalhes agora e receba um pré-diagnóstico com valor e prazo estimados.
+          </p>
+
+          <div class="benefits-list">
+            <div class="benefit-item">
+              <div class="benefit-check">✓</div>
+              <div>
+                <strong>Atendimento humanizado</strong>
+                <span>Fale diretamente com quem entende de eletrônica.</span>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-check">✓</div>
+              <div>
+                <strong>Peças com procedência e garantia</strong>
+                <span>Trabalhamos com componentes de alta durabilidade.</span>
+              </div>
+            </div>
+            <div class="benefit-item">
+              <div class="benefit-check">✓</div>
+              <div>
+                <strong>Pagamento facilitado</strong>
+                <span>Parcelamos em até 12x no cartão de crédito ou Pix com desconto.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <ContactForm />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ Section -->
+  <FAQ />
+
+  <!-- Location & Map -->
+  <Map />
+
+  <!-- Native Modals -->
+  {services.map((s) => (
+    <ServiceModal 
+      id={s.id}
+      title={s.title}
+      turnaround={s.turnaround}
+      priceRange={s.priceRange}
+      details={s.details}
+      includes={s.includes}
+    />
+  ))}
+</BaseLayout>
+
+<style>
+  .quote-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 4rem;
+    align-items: center;
+  }
+
+  .lead-text {
+    font-size: 1.15rem;
+    color: var(--ct-text-muted);
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .benefits-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .benefit-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .benefit-check {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: rgba(20, 184, 122, 0.2);
+    color: var(--ct-green-400);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  .benefit-item strong {
+    display: block;
+    color: var(--ct-text-main);
+    font-size: 1rem;
+  }
+
+  .benefit-item span {
+    color: var(--ct-text-muted);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 960px) {
+    .quote-grid {
+      grid-template-columns: 1fr;
+      gap: 2.5rem;
+    }
+  }
+</style>

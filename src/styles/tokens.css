@@ -1,0 +1,85 @@
+:root {
+  /* Cores Principais - CamargoTech */
+  --ct-blue-900: #0A1929;
+  --ct-blue-800: #0e2238;
+  --ct-blue-700: #123A5C;
+  --ct-blue-500: #1E6FBF;
+  --ct-blue-300: #5CA8E8;
+  --ct-blue-100: #d6e8fa;
+
+  /* Cores de Destaque */
+  --ct-orange-500: #FF6B1A;
+  --ct-orange-400: #FF8A47;
+  --ct-orange-600: #e0550c;
+  --ct-green-500: #14B87A;
+  --ct-green-400: #29d997;
+
+  /* Neutros e Estrutura */
+  --ct-bg: #0A1929;
+  --ct-surface: #10243b;
+  --ct-surface-card: #152d47;
+  --ct-border: #1e3f63;
+  --ct-text-main: #F4F6F8;
+  --ct-text-muted: #9BB0C7;
+  --ct-white: #FFFFFF;
+  --ct-gray-100: #F4F6F8;
+  --ct-gray-300: #D5DBE0;
+  --ct-gray-500: #6B7785;
+  --ct-gray-900: #1A2027;
+
+  /* Feedback */
+  --ct-success: #14B87A;
+  --ct-error: #E63946;
+  --ct-warning: #FFB800;
+
+  /* Espaçamento */
+  --ct-space-xs: 0.25rem;
+  --ct-space-sm: 0.5rem;
+  --ct-space-md: 1rem;
+  --ct-space-lg: 2rem;
+  --ct-space-xl: 4rem;
+
+  /* Tipografia fluida */
+  --ct-font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --ct-font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --ct-h1: clamp(2rem, 4.5vw + 1rem, 3.5rem);
+  --ct-h2: clamp(1.6rem, 2.8vw + 0.5rem, 2.5rem);
+  --ct-h3: clamp(1.2rem, 1.8vw + 0.4rem, 1.6rem);
+  --ct-body: clamp(1rem, 1vw + 0.75rem, 1.125rem);
+
+  /* Sombras e raios */
+  --ct-shadow-sm: 0 2px 6px rgba(5, 13, 22, 0.25);
+  --ct-shadow-md: 0 8px 24px rgba(5, 13, 22, 0.35);
+  --ct-shadow-lg: 0 16px 40px rgba(5, 13, 22, 0.5);
+  --ct-shadow-glow: 0 0 25px rgba(30, 111, 191, 0.35);
+  --ct-shadow-orange: 0 8px 20px rgba(255, 107, 26, 0.3);
+
+  --ct-radius-sm: 8px;
+  --ct-radius-md: 14px;
+  --ct-radius-lg: 22px;
+  --ct-radius-full: 9999px;
+
+  --ct-transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-theme="light"] {
+  --ct-bg: #F4F6F8;
+  --ct-surface: #FFFFFF;
+  --ct-surface-card: #FFFFFF;
+  --ct-border: #D5DBE0;
+  --ct-text-main: #0A1929;
+  --ct-text-muted: #536475;
+  --ct-shadow-sm: 0 2px 6px rgba(10, 25, 41, 0.06);
+  --ct-shadow-md: 0 8px 20px rgba(10, 25, 41, 0.08);
+  --ct-shadow-lg: 0 16px 36px rgba(10, 25, 41, 0.12);
+  --ct-shadow-glow: 0 0 20px rgba(30, 111, 191, 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

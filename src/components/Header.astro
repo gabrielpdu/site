@@ -1,0 +1,262 @@
+---
+interface Props {
+  activePage?: string;
+}
+
+const { activePage = 'inicio' } = Astro.props;
+---
+
+<header class="ct-header" x-data="{ mobileOpen: false }">
+  <div class="container header-container">
+    <!-- Brand Logo -->
+    <a href="/" class="brand-logo" aria-label="CamargoTech Início">
+      <div class="logo-symbol">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="3" width="20" height="14" rx="2"></rect>
+          <path d="M8 21h8M12 17v4"></path>
+        </svg>
+      </div>
+      <div class="logo-text">
+        <span class="logo-camargo">Camargo</span><span class="logo-tech">Tech</span>
+      </div>
+    </a>
+
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav" aria-label="Navegação Principal">
+      <a href="/" class={activePage === 'inicio' ? 'nav-link active' : 'nav-link'}>Início</a>
+      <a href="/servicos" class={activePage === 'servicos' ? 'nav-link active' : 'nav-link'}>Serviços</a>
+      <a href="/sobre" class={activePage === 'sobre' ? 'nav-link active' : 'nav-link'}>Sobre Nós</a>
+      <a href="/#como-funciona" class="nav-link">Como Funciona</a>
+      <a href="/#depoimentos" class="nav-link">Depoimentos</a>
+      <a href="/area-cliente" class={activePage === 'area-cliente' ? 'nav-link active' : 'nav-link'}>Área do Cliente</a>
+      <a href="/contato" class={activePage === 'contato' ? 'nav-link active' : 'nav-link'}>Contato</a>
+    </nav>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <!-- Dark/Light Mode Switcher -->
+      <button type="button" class="theme-btn" data-theme-toggle aria-label="Alternar tema claro e escuro">
+        <svg class="theme-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="4"></circle>
+          <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"></path>
+        </svg>
+        <svg class="theme-moon hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+        </svg>
+      </button>
+
+      <!-- CTA Orçamento -->
+      <a href="/contato" class="btn btn-primary cta-btn">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+        </svg>
+        <span>Orçamento</span>
+      </a>
+
+      <!-- Mobile Menu Button -->
+      <button 
+        type="button" 
+        class="mobile-toggle" 
+        @click="mobileOpen = !mobileOpen" 
+        :aria-expanded="mobileOpen"
+        aria-label="Abrir menu de navegação"
+      >
+        <svg x-show="!mobileOpen" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+        <svg x-show="mobileOpen" x-cloak width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"></line>
+          <line x1="6" y1="6" x2="18" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- Mobile Drawer Menu -->
+  <div 
+    class="mobile-menu" 
+    x-show="mobileOpen" 
+    x-transition:enter="transition ease-out duration-200"
+    x-transition:enter-start="opacity-0 -translate-y-4"
+    x-transition:enter-end="opacity-100 translate-y-0"
+    x-transition:leave="transition ease-in duration-150"
+    x-transition:leave-start="opacity-100 translate-y-0"
+    x-transition:leave-end="opacity-0 -translate-y-4"
+    x-cloak
+  >
+    <nav class="mobile-nav">
+      <a href="/" class="mobile-nav-link" @click="mobileOpen = false">Início</a>
+      <a href="/servicos" class="mobile-nav-link" @click="mobileOpen = false">Serviços</a>
+      <a href="/sobre" class="mobile-nav-link" @click="mobileOpen = false">Sobre Nós</a>
+      <a href="/#como-funciona" class="mobile-nav-link" @click="mobileOpen = false">Como Funciona</a>
+      <a href="/#depoimentos" class="mobile-nav-link" @click="mobileOpen = false">Depoimentos</a>
+      <a href="/area-cliente" class="mobile-nav-link" @click="mobileOpen = false">Área do Cliente</a>
+      <a href="/contato" class="mobile-nav-link" @click="mobileOpen = false">Contato & Orçamento</a>
+      <div style="padding-top: 1rem;">
+        <a href="/contato" class="btn btn-primary" style="width: 100%; justify-content: center;" @click="mobileOpen = false">
+          Solicitar Diagnóstico
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .ct-header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(10, 25, 41, 0.88);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--ct-border);
+    transition: background-color 0.25s ease;
+  }
+
+  [data-theme="light"] .ct-header {
+    background: rgba(255, 255, 255, 0.92);
+  }
+
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 76px;
+    gap: 1.5rem;
+  }
+
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  .logo-symbol {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--ct-radius-sm);
+    background: linear-gradient(135deg, var(--ct-blue-500), var(--ct-blue-700));
+    color: #fff;
+    display: grid;
+    place-items: center;
+    box-shadow: 0 4px 12px rgba(30, 111, 191, 0.35);
+  }
+
+  .logo-text {
+    font-size: 1.35rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .logo-camargo {
+    color: var(--ct-text-main);
+  }
+
+  .logo-tech {
+    color: var(--ct-orange-500);
+  }
+
+  .desktop-nav {
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  .nav-link {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ct-text-muted);
+    position: relative;
+    padding-block: 0.25rem;
+  }
+
+  .nav-link:hover, .nav-link.active {
+    color: var(--ct-text-main);
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--ct-orange-500);
+    border-radius: 2px;
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+  }
+
+  .theme-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--ct-radius-md);
+    border: 1px solid var(--ct-border);
+    display: grid;
+    place-items: center;
+    color: var(--ct-text-main);
+    background: var(--ct-surface);
+    transition: var(--ct-transition);
+  }
+
+  .theme-btn:hover {
+    border-color: var(--ct-orange-500);
+    color: var(--ct-orange-500);
+  }
+
+  .theme-btn .hidden {
+    display: none !important;
+  }
+
+  .mobile-toggle {
+    display: none;
+    width: 40px;
+    height: 40px;
+    border-radius: var(--ct-radius-md);
+    background: var(--ct-surface);
+    border: 1px solid var(--ct-border);
+    color: var(--ct-text-main);
+    place-items: center;
+  }
+
+  .mobile-menu {
+    border-bottom: 1px solid var(--ct-border);
+    background: var(--ct-surface);
+    padding: 1.5rem;
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .mobile-nav-link {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--ct-text-main);
+    padding-block: 0.35rem;
+  }
+
+  @media (max-width: 980px) {
+    .desktop-nav {
+      display: none;
+    }
+    .mobile-toggle {
+      display: grid;
+    }
+    .cta-btn span {
+      display: none;
+    }
+    .cta-btn {
+      padding: 0.6rem 0.85rem;
+    }
+  }
+</style>

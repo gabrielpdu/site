@@ -1,0 +1,244 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 5rem;
+  color-scheme: dark light;
+}
+
+body {
+  font-family: var(--ct-font-sans);
+  background-color: var(--ct-bg);
+  color: var(--ct-text-main);
+  line-height: 1.6;
+  font-size: var(--ct-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow-x: hidden;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+main {
+  flex: 1;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: var(--ct-transition);
+}
+
+img, svg {
+  display: block;
+  max-width: 100%;
+}
+
+button, input, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--ct-orange-500);
+  outline-offset: 3px;
+  border-radius: var(--ct-radius-sm);
+}
+
+/* Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 1rem;
+  background: var(--ct-orange-500);
+  color: #fff;
+  padding: 0.75rem 1.25rem;
+  z-index: 9999;
+  font-weight: 700;
+  border-radius: var(--ct-radius-sm);
+  box-shadow: var(--ct-shadow-lg);
+  transition: top 0.2s ease;
+}
+
+.skip-link:focus {
+  top: 1rem;
+}
+
+/* Containers */
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin-inline: auto;
+  padding-inline: 1.5rem;
+}
+
+/* Headings */
+h1 {
+  font-size: var(--ct-h1);
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+h2 {
+  font-size: var(--ct-h2);
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+}
+
+h3 {
+  font-size: var(--ct-h3);
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+/* Badges & Pills */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.9rem;
+  border-radius: var(--ct-radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  background: rgba(30, 111, 191, 0.15);
+  color: var(--ct-blue-300);
+  border: 1px solid rgba(30, 111, 191, 0.3);
+}
+
+.badge-orange {
+  background: rgba(255, 107, 26, 0.15);
+  color: var(--ct-orange-400);
+  border-color: rgba(255, 107, 26, 0.3);
+}
+
+.badge-green {
+  background: rgba(20, 184, 122, 0.15);
+  color: var(--ct-green-400);
+  border-color: rgba(20, 184, 122, 0.3);
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 700;
+  border-radius: var(--ct-radius-md);
+  transition: var(--ct-transition);
+  border: 1px solid transparent;
+  user-select: none;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--ct-orange-500), var(--ct-orange-600));
+  color: #FFFFFF;
+  box-shadow: var(--ct-shadow-orange);
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, var(--ct-orange-400), var(--ct-orange-500));
+  box-shadow: 0 10px 24px rgba(255, 107, 26, 0.45);
+}
+
+.btn-secondary {
+  background: var(--ct-blue-500);
+  color: #FFFFFF;
+}
+
+.btn-secondary:hover {
+  background: var(--ct-blue-700);
+}
+
+.btn-whatsapp {
+  background: linear-gradient(135deg, #1bd741, #128c7e);
+  color: #FFFFFF;
+  box-shadow: 0 8px 20px rgba(27, 215, 65, 0.3);
+}
+
+.btn-whatsapp:hover {
+  background: linear-gradient(135deg, #20eb4a, #15a594);
+  box-shadow: 0 10px 26px rgba(27, 215, 65, 0.45);
+}
+
+.btn-outline {
+  background: transparent;
+  border: 1px solid var(--ct-border);
+  color: var(--ct-text-main);
+}
+
+.btn-outline:hover {
+  background: var(--ct-surface);
+  border-color: var(--ct-blue-500);
+}
+
+/* Modals with native <dialog> */
+dialog {
+  border: none;
+  background: transparent;
+  padding: 0;
+  max-width: 90vw;
+  margin: auto;
+}
+
+dialog::backdrop {
+  background: rgba(10, 25, 41, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.modal-content {
+  background: var(--ct-surface-card);
+  border: 1px solid var(--ct-border);
+  border-radius: var(--ct-radius-lg);
+  padding: 2rem;
+  color: var(--ct-text-main);
+  max-width: 580px;
+  width: 100%;
+  box-shadow: var(--ct-shadow-lg);
+  position: relative;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--ct-surface);
+  border: 1px solid var(--ct-border);
+  display: grid;
+  place-items: center;
+  color: var(--ct-text-muted);
+  font-size: 1.25rem;
+  transition: var(--ct-transition);
+}
+
+.modal-close:hover {
+  color: #FFFFFF;
+  background: var(--ct-orange-500);
+  border-color: var(--ct-orange-500);
+}

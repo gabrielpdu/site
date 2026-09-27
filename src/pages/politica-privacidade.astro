@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Política de Privacidade (LGPD) | CamargoTech" 
+  description="Conheça a Política de Privacidade e Proteção de Dados da CamargoTech de acordo com a Lei Geral de Proteção de Dados (Lei 13.709/2018)."
+  activePage="politica-privacidade"
+>
+  <div class="section-head" style="padding-top: 4rem;">
+    <span class="badge badge-green">Proteção e Conformidade</span>
+    <h1>Política de Privacidade (LGPD)</h1>
+    <p>Última atualização: Setembro de 2026</p>
+  </div>
+
+  <section class="container" style="max-width: 860px; margin-bottom: 5rem;">
+    <div class="card legal-doc">
+      <h2>1. Compromisso com a sua Privacidade</h2>
+      <p>
+        A <strong>CamargoTech</strong> tem o compromisso de proteger a privacidade e os dados pessoais dos usuários de seus serviços e visitantes de seu site, em estrita conformidade com a Lei Federal nº 13.709/2018 (Lei Geral de Proteção de Dados Pessoais - LGPD).
+      </p>
+
+      <h2>2. Dados Coletados e Finalidades</h2>
+      <p>Coletamos exclusivamente os dados necessários para o atendimento técnico e orçamentário:</p>
+      <ul>
+        <li><strong>Nome Completo:</strong> Identificação do titular do equipamento para elaboração de Ordem de Serviço (OS) e emissão de termo de garantia.</li>
+        <li><strong>E-mail e WhatsApp/Telefone:</strong> Envio do diagnóstico técnico, fotos de bancada, aprovação formal de orçamento e aviso de retirada do dispositivo pronto.</li>
+        <li><strong>Endereço/CEP:</strong> Utilizado unicamente quando o cliente solicita o serviço de coleta e entrega expressa por motoboy.</li>
+      </ul>
+
+      <h2>3. Sigilo Absoluto dos Dados no Equipamento</h2>
+      <p>
+        Durante os serviços de reparo, formatação ou recuperação de dados em computadores, notebooks ou celulares:
+      </p>
+      <ul>
+        <li>Nenhum colaborador da CamargoTech tem autorização para visualizar, copiar ou divulgar fotos, conversas, vídeos, documentos pessoais ou senhas contidos na mídia de armazenamento do cliente.</li>
+        <li>Cópias de segurança (backups) são armazenadas em servidores criptografados locais com exclusão automática e segura após 15 dias corridos da retirada do equipamento consertado.</li>
+      </ul>
+
+      <h2>4. Uso de Cookies e Armazenamento Local</h2>
+      <p>
+        Utilizamos apenas <code>localStorage</code> e cookies estritamente essenciais para salvar suas preferências de exibição (modo escuro ou modo claro) e registrar a sua escolha sobre os cookies. Não utilizamos rastreadores de terceiros para fins de venda de dados a anunciantes.
+      </p>
+
+      <h2>5. Direitos do Titular (LGPD)</h2>
+      <p>
+        Você tem o direito de solicitar a qualquer momento a confirmação de tratamento, acesso, correção ou exclusão definitiva (direito ao esquecimento) dos seus dados de cadastro entrando em contato direto pelo nosso canal oficial de privacidade:
+      </p>
+      <p><strong>Encarregado de Proteção de Dados (DPO):</strong> dpo@techcamargo.com.br</p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal-doc {
+    padding: 3rem;
+    line-height: 1.8;
+  }
+
+  .legal-doc h2 {
+    font-size: 1.35rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--ct-text-main);
+  }
+
+  .legal-doc p {
+    color: var(--ct-text-muted);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .legal-doc ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--ct-text-muted);
+  }
+
+  .legal-doc li {
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 600px) {
+    .legal-doc {
+      padding: 1.75rem;
+    }
+  }
+</style>

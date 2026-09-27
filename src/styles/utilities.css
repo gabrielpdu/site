@@ -1,0 +1,239 @@
+/* Grid & Layout Utilities */
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2rem;
+}
+
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.75rem;
+}
+
+.grid-4 {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .grid-4 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .grid-4, .grid-3, .grid-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Sections */
+.section {
+  padding-block: 5.5rem;
+  position: relative;
+}
+
+.section-alt {
+  background: var(--ct-surface);
+  border-top: 1px solid var(--ct-border);
+  border-bottom: 1px solid var(--ct-border);
+}
+
+.section-head {
+  text-align: center;
+  max-width: 680px;
+  margin-inline: auto;
+  margin-bottom: 3.5rem;
+}
+
+.section-head p {
+  color: var(--ct-text-muted);
+  font-size: 1.125rem;
+  margin-top: 0.75rem;
+}
+
+/* Cards */
+.card {
+  background: var(--ct-surface-card);
+  border: 1px solid var(--ct-border);
+  border-radius: var(--ct-radius-md);
+  padding: 1.75rem;
+  transition: var(--ct-transition);
+  display: flex;
+  flex-direction: column;
+}
+
+.card:hover {
+  border-color: var(--ct-blue-500);
+  transform: translateY(-4px);
+  box-shadow: var(--ct-shadow-md);
+}
+
+/* Card Icons */
+.card-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: var(--ct-radius-md);
+  background: rgba(30, 111, 191, 0.15);
+  color: var(--ct-blue-300);
+  display: grid;
+  place-items: center;
+  margin-bottom: 1.25rem;
+  border: 1px solid rgba(30, 111, 191, 0.25);
+}
+
+.card-icon-orange {
+  background: rgba(255, 107, 26, 0.15);
+  color: var(--ct-orange-400);
+  border-color: rgba(255, 107, 26, 0.25);
+}
+
+.card-icon-green {
+  background: rgba(20, 184, 122, 0.15);
+  color: var(--ct-green-400);
+  border-color: rgba(20, 184, 122, 0.25);
+}
+
+/* Text Gradients */
+.gradient-text-orange {
+  background: linear-gradient(135deg, var(--ct-orange-400), #ff9f66);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.gradient-text-blue {
+  background: linear-gradient(135deg, var(--ct-blue-300), #87c5fb);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Subtle Glow Backgrounds */
+.glow-bg {
+  position: absolute;
+  width: 550px;
+  height: 550px;
+  border-radius: 50%;
+  filter: blur(120px);
+  pointer-events: none;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.glow-blue {
+  background: var(--ct-blue-500);
+}
+
+.glow-orange {
+  background: var(--ct-orange-500);
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 28px;
+  width: 3px;
+  background: linear-gradient(to bottom, var(--ct-orange-500), var(--ct-blue-500));
+}
+
+@media (min-width: 768px) {
+  .timeline::before {
+    left: 50%;
+    transform: translateX(-50%);
+  }
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 2.5rem;
+  display: flex;
+  align-items: flex-start;
+}
+
+.timeline-dot {
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background: var(--ct-surface-card);
+  border: 3px solid var(--ct-orange-500);
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.25rem;
+  display: grid;
+  place-items: center;
+  z-index: 2;
+  box-shadow: 0 0 15px rgba(255, 107, 26, 0.4);
+  flex-shrink: 0;
+}
+
+.timeline-content {
+  background: var(--ct-surface-card);
+  border: 1px solid var(--ct-border);
+  border-radius: var(--ct-radius-md);
+  padding: 1.5rem 1.75rem;
+  margin-left: 1.5rem;
+  flex: 1;
+}
+
+/* Forms */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.form-label {
+  font-size: 0.925rem;
+  font-weight: 600;
+  color: var(--ct-text-main);
+}
+
+.form-input, .form-select, .form-textarea {
+  background: var(--ct-surface);
+  border: 1px solid var(--ct-border);
+  border-radius: var(--ct-radius-sm);
+  padding: 0.8rem 1rem;
+  color: var(--ct-text-main);
+  transition: var(--ct-transition);
+  width: 100%;
+}
+
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--ct-orange-500);
+  box-shadow: 0 0 0 3px rgba(255, 107, 26, 0.15);
+  outline: none;
+}
+
+.form-error {
+  color: var(--ct-error);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+/* Reading Progress Bar */
+#reading-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 4px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--ct-blue-500), var(--ct-orange-500));
+  z-index: 9999;
+  transition: width 0.1s linear;
+}

@@ -1,0 +1,65 @@
+---
+const steps = [
+  {
+    num: "1",
+    title: "1. Diagnóstico e Triagem Técnica",
+    desc: "Você traz o aparelho ou solicita coleta. Nossos técnicos realizam testes de hardware, análise de consumo elétrico e inspeção visual detalhada sem custo prévio."
+  },
+  {
+    num: "2",
+    title: "2. Orçamento Transparente e Detalhado",
+    desc: "Enviamos um laudo completo via WhatsApp e E-mail com fotos do defeito, relação exata das peças a serem substituídas, valor fechado e prazo garantido."
+  },
+  {
+    num: "3",
+    title: "3. Sua Aprovação Formal",
+    desc: "Nenhum parafuso é mexido sem a sua autorização expressa. Você valida o orçamento diretamente pelo link ou mensagem, com total clareza e sem surpresas."
+  },
+  {
+    num: "4",
+    title: "4. Execução Técnica Especializada",
+    desc: "O reparo é realizado em bancada ESD antiestática com ferramentas de precisão, peças de alta qualidade e aplicação de compostos térmicos de alto desempenho."
+  },
+  {
+    num: "5",
+    title: "5. Testes Finais e Entrega com Garantia",
+    desc: "Submetemos o aparelho a testes de estresse, bateria e estabilidade. Você retira seu equipamento impecável com termo de garantia de 90 dias e nota de serviço."
+  }
+];
+---
+
+<section class="section section-alt" id="como-funciona">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-orange">Fluxo Transparente</span>
+      <h2>Como Funciona o Atendimento CamargoTech</h2>
+      <p>Processo simples, ágil e seguro para você ter seu equipamento de volta no menor tempo possível.</p>
+    </div>
+
+    <div class="timeline">
+      {steps.map((step) => (
+        <div class="timeline-item">
+          <div class="timeline-dot">{step.num}</div>
+          <div class="timeline-content">
+            <h3 class="step-title">{step.title}</h3>
+            <p class="step-desc">{step.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .step-title {
+    font-size: 1.2rem;
+    color: var(--ct-text-main);
+    margin-bottom: 0.5rem;
+  }
+
+  .step-desc {
+    color: var(--ct-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+</style>

@@ -1,0 +1,112 @@
+---
+const faqs = [
+  {
+    q: "O diagnóstico e orçamento da CamargoTech são gratuitos?",
+    a: "Sim! Não cobramos pela avaliação e emissão do laudo técnico inicial. Você recebe a cotação detalhada antes de qualquer intervenção e só paga se o serviço for formalmente aprovado por você."
+  },
+  {
+    q: "Meus arquivos, fotos e dados pessoais ficam seguros?",
+    a: "Totalmente. Assinamos termo de confidencialidade e seguimos rigorosamente a LGPD. Para reparos de software e formatação, realizamos backup prévio completo dos seus documentos antes de qualquer formatação."
+  },
+  {
+    q: "Qual é o tempo médio de reparo para celulares e notebooks?",
+    a: "Serviços expressos (como troca de telas, baterias e formatações) geralmente ficam prontos no mesmo dia ou em até 24 horas. Reparos avançados de placa-mãe e circuitos levam em média de 2 a 4 dias úteis."
+  },
+  {
+    q: "A CamargoTech oferece garantia em todos os serviços?",
+    a: "Sim! Oferecemos 90 dias de garantia legal por escrito com laudo e nota fiscal em todos os consertos de placas, trocas de peças e manutenções realizadas em nossa oficina."
+  },
+  {
+    q: "As peças de reposição utilizadas são originais?",
+    a: "Trabalhamos exclusivamente com peças genuínas originais ou peças OEM de primeira linha certificadas pelo fabricante, garantindo máxima durabilidade, cores fiéis nas telas e saúde ideal da bateria."
+  },
+  {
+    q: "Como posso acompanhar o status do meu conserto?",
+    a: "Disponibilizamos nossa Área do Cliente online no site. Basta inserir o número da sua Ordem de Serviço (OS) para consultar o laudo técnico, testes e fotos do andamento em tempo real."
+  }
+];
+---
+
+<section class="section section-alt" id="faq">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-orange">Tire Suas Dúvidas</span>
+      <h2>Perguntas Frequentes</h2>
+      <p>Esclarecimentos rápidos sobre nossos processos, garantias e padrões de atendimento.</p>
+    </div>
+
+    <div class="faq-list">
+      {faqs.map((faq) => (
+        <details class="faq-item">
+          <summary class="faq-summary">
+            <span class="faq-question">{faq.q}</span>
+            <span class="faq-icon" aria-hidden="true">+</span>
+          </summary>
+          <div class="faq-answer">
+            <p>{faq.a}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-list {
+    max-width: 820px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .faq-item {
+    background: var(--ct-surface-card);
+    border: 1px solid var(--ct-border);
+    border-radius: var(--ct-radius-md);
+    overflow: hidden;
+    transition: var(--ct-transition);
+  }
+
+  .faq-item[open] {
+    border-color: var(--ct-blue-500);
+  }
+
+  .faq-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.25rem 1.5rem;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1.05rem;
+    color: var(--ct-text-main);
+    list-style: none;
+    user-select: none;
+  }
+
+  .faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-icon {
+    font-size: 1.5rem;
+    font-weight: 400;
+    color: var(--ct-orange-500);
+    transition: transform 0.2s ease;
+  }
+
+  .faq-item[open] .faq-icon {
+    transform: rotate(45deg);
+  }
+
+  .faq-answer {
+    padding: 0 1.5rem 1.5rem 1.5rem;
+    color: var(--ct-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    border-top: 1px solid rgba(255, 255, 255, 0.04);
+    padding-top: 1rem;
+  }
+</style>

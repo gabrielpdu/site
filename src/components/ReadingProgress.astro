@@ -1,0 +1,16 @@
+---
+---
+
+<div id="reading-progress" aria-hidden="true"></div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const winScroll = document.documentElement.scrollTop || document.body.scrollTop;
+    const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+    const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+    const bar = document.getElementById('reading-progress');
+    if (bar) {
+      bar.style.width = scrolled + '%';
+    }
+  }, { passive: true });
+</script>

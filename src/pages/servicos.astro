@@ -1,0 +1,244 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import ServiceModal from '../components/ServiceModal.astro';
+
+const allServices = [
+  {
+    id: "celulares",
+    title: "Conserto de Celulares",
+    turnaround: "1-3 dias",
+    priceRange: "R$ 80 – R$ 900",
+    iconType: "mobile",
+    description: "Reparo em placas lógicas, conector de carga, câmeras e microfones para Apple, Samsung, Xiaomi e Motorola.",
+    features: ["Microsolda BGA e SMD", "Troca de conector Tipo-C e Lightning", "Recuperação de Face ID e biometria", "Desoxidação ultrassônica"],
+    details: "Técnicos certificados com microscópios de alta precisão para reparos em nível de componente eletrônico.",
+    includes: ["Inspeção de consumo elétrico", "Vedação IP68 quando aplicável", "Garantia formal de 90 dias", "Limpeza externa do aparelho"]
+  },
+  {
+    id: "notebooks",
+    title: "Conserto de Notebooks/PCs",
+    turnaround: "2-5 dias",
+    priceRange: "R$ 120 – R$ 1500",
+    iconType: "laptop",
+    description: "Manutenção em notebooks Dell, Lenovo, Acer, HP, Asus e computadores desktops corporativos ou gamers.",
+    features: ["Reparo de placa-mãe sem vídeo", "Reconstrução de dobradiças quebradas", "Troca de teclado e carcaça", "Substituição de cooler e fontes"],
+    details: "Identificação precisa de curto em linhas de alimentação de processador e memórias com câmera térmica e osciloscópio.",
+    includes: ["Desmontagem cuidadosa", "Peças novas testadas", "Troca da pasta térmica", "Laudo técnico detalhado"]
+  },
+  {
+    id: "formatacao",
+    title: "Formatação e Instalação",
+    turnaround: "1 dia",
+    priceRange: "R$ 80 – R$ 200",
+    iconType: "disc",
+    features: ["Backup completo dos seus arquivos", "Windows 11 / 10 ativado", "Drivers oficiais atualizados", "Pacote de programas essenciais"],
+    description: "Instalação limpa do sistema operacional sem perda de arquivos, garantindo velocidade máxima e segurança.",
+    details: "Seus dados são preservados em discos externos protegidos antes de qualquer modificação no sistema.",
+    includes: ["Cópia segura de arquivos", "Configuração de antivírus gratuito", "Otimização de inicialização", "Garantia de estabilidade"]
+  },
+  {
+    id: "dados",
+    title: "Recuperação de Dados",
+    turnaround: "2-7 dias",
+    priceRange: "R$ 200 – R$ 2000",
+    iconType: "database",
+    features: ["Recuperação em HDs com cliques", "SSDs não reconhecidos", "Pendrives e cartões SD", "Sigilo e confidencialidade"],
+    description: "Recuperação profissional de arquivos deletados, corrompidos ou em mídias com falha mecânica e eletrônica.",
+    details: "Utilizamos ferramentas forenses para extração direta de blocos de memória sem estressar ainda mais o disco defeituoso.",
+    includes: ["Relatório de integridade das pastas", "Entrega dos dados em nova mídia", "Sigilo sob contrato", "Sem custo se nada for recuperado"]
+  },
+  {
+    id: "telas",
+    title: "Troca de Tela/Bateria",
+    turnaround: "1-2 dias",
+    priceRange: "R$ 150 – R$ 1200",
+    iconType: "screen",
+    features: ["Displays originais com True Tone", "Baterias com selo Anatel", "Calibração de sensibilidade de toque", "Sem aviso de peça desconhecida"],
+    description: "Substituição rápida de telas trincadas, touch com falha e baterias que descarregam rápido ou estufaram.",
+    details: "Trabalhamos com fornecedores homologados para garantir brilho, taxas de atualização de 120Hz e consumo elétrico idênticos de fábrica.",
+    includes: ["Fita de vedação de proteção", "Descarte ecológico da bateria antiga", "Garantia de 90 dias", "Película de brinde instalada"]
+  },
+  {
+    id: "manutencao",
+    title: "Manutenção Preventiva",
+    turnaround: "1 dia",
+    priceRange: "R$ 100 – R$ 300",
+    iconType: "gear",
+    features: ["Limpeza interna de poeira e maresia", "Pasta térmica de prata ou metal líquido", "Lubrificação de rolamentos de coolers", "Redução de até 25°C na temperatura"],
+    description: "Higienização completa e substituição de compostos térmicos para evitar que seu PC ou notebook queime por superaquecimento.",
+    details: "Ideal para computadores e notebooks que já têm mais de 1 ano de uso sem manutenção, evitando que chips de vídeo sofram delaminação térmica.",
+    includes: ["Desoxidação de contatos de memória", "Substituição de thermal pads", "Relatório de temperaturas antes e depois", "Revisão geral de cabos"]
+  },
+  {
+    id: "redes",
+    title: "Instalação de Redes",
+    turnaround: "1-2 dias",
+    priceRange: "R$ 200 – R$ 800",
+    iconType: "gear",
+    features: ["Roteadores Wi-Fi 6 e Mesh", "Cabeamento estruturado Cat6", "Configuração de switches e VLANs", "Eliminação de pontos cegos de sinal"],
+    description: "Infraestrutura de rede estável e veloz para residências e escritórios que precisam de estabilidade em reuniões e jogos.",
+    details: "Medição de espectro e interferências para alocação dos canais de frequência mais limpos e configuração segura de firewalls.",
+    includes: ["Conectores RJ45 blindados", "Certificação de cabos", "Configuração de senha e controle parental", "Suporte pós-instalação"]
+  },
+  {
+    id: "acessorios",
+    title: "Venda de Acessórios",
+    turnaround: "Imediato",
+    priceRange: "Sob consulta",
+    iconType: "gear",
+    features: ["Fontes e carregadores homologados", "Cabos blindados USB-C e Lightning", "Películas de hidrogel e vidro 3D", "SSDs NVMe, memórias e periféricos"],
+    description: "Acessórios e componentes de reposição das melhores marcas com pronta entrega e garantia em nossa loja física.",
+    details: "Produtos testados em bancada para você ter certeza de compatibilidade e segurança para o seu equipamento eletrônico.",
+    includes: ["Garantia direta na loja", "Instalação gratuita do acessório", "Nota fiscal em todos os itens", "Orientação de uso"]
+  }
+];
+---
+
+<BaseLayout 
+  title="Serviços & Tabela de Preços | CamargoTech" 
+  description="Confira todos os serviços de assistência técnica da CamargoTech: celulares, computadores, notebooks, telas, baterias e recuperação de dados."
+  activePage="servicos"
+>
+  <div class="section-head" style="padding-top: 4rem;">
+    <span class="badge badge-orange">Catálogo Completo</span>
+    <h1>Serviços CamargoTech</h1>
+    <p>Soluções profissionais com prazos definidos, transparência e valores acessíveis para seu conforto.</p>
+  </div>
+
+  <!-- Comparison / Overview Table -->
+  <section class="container" style="margin-bottom: 4rem;">
+    <div class="table-card">
+      <div class="table-header">
+        <h3>Tabela Comparativa de Prazos e Valores Médios</h3>
+        <p>Valores de referência sujeitos a diagnóstico prévio e modelo exato do aparelho.</p>
+      </div>
+      <div class="table-responsive">
+        <table class="services-table">
+          <thead>
+            <tr>
+              <th>Serviço Especializado</th>
+              <th>Prazo Médio</th>
+              <th>Faixa Estimada</th>
+              <th>Ação</th>
+            </tr>
+          </thead>
+          <tbody>
+            {allServices.map(s => (
+              <tr>
+                <td><strong>{s.title}</strong></td>
+                <td><span class="badge">{s.turnaround}</span></td>
+                <td><span class="price-strong">{s.priceRange}</span></td>
+                <td>
+                  <button 
+                    type="button" 
+                    class="btn btn-outline btn-table" 
+                    onclick={`document.getElementById('modal-${s.id}').showModal()`}
+                  >
+                    Ver Laudo & Inclusos
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Detailed Cards Grid -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <h2>Detalhamento dos Serviços</h2>
+        <p>Clique em qualquer card para ver a lista de peças, procedimentos e solicitar seu orçamento.</p>
+      </div>
+
+      <div class="grid-4">
+        {allServices.map(s => (
+          <ServiceCard 
+            id={s.id}
+            title={s.title}
+            description={s.description}
+            turnaround={s.turnaround}
+            priceRange={s.priceRange}
+            iconType={s.iconType}
+            features={s.features}
+          />
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Modals -->
+  {allServices.map(s => (
+    <ServiceModal 
+      id={s.id}
+      title={s.title}
+      turnaround={s.turnaround}
+      priceRange={s.priceRange}
+      details={s.details}
+      includes={s.includes}
+    />
+  ))}
+</BaseLayout>
+
+<style>
+  .table-card {
+    background: var(--ct-surface-card);
+    border: 1px solid var(--ct-border);
+    border-radius: var(--ct-radius-lg);
+    padding: 2rem;
+    box-shadow: var(--ct-shadow-md);
+  }
+
+  .table-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .table-header h3 {
+    font-size: 1.35rem;
+  }
+
+  .table-header p {
+    color: var(--ct-text-muted);
+    font-size: 0.9rem;
+    margin-top: 0.25rem;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .services-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    font-size: 0.95rem;
+  }
+
+  .services-table th, .services-table td {
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--ct-border);
+  }
+
+  .services-table th {
+    background: var(--ct-surface);
+    color: var(--ct-text-main);
+    font-weight: 700;
+  }
+
+  .services-table tr:hover td {
+    background: rgba(30, 111, 191, 0.05);
+  }
+
+  .price-strong {
+    color: var(--ct-orange-400);
+    font-weight: 700;
+  }
+
+  .btn-table {
+    padding: 0.45rem 0.9rem;
+    font-size: 0.85rem;
+  }
+</style>

@@ -1,0 +1,431 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Assistência Técnica em Computadores e Notebooks</title>
+<meta name="description" content="Conserto de computadores e notebooks: formatação, limpeza, upgrade de SSD e memória, troca de tela, teclado e bateria. Orçamento rápido pelo WhatsApp.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b1220; --bg2:#111a2e; --card:#16213a; --line:#23304d;
+    --text:#e8eefc; --muted:#9fb0d0; --accent:#22c55e; --accent2:#38bdf8;
+    --radius:16px; --max:1120px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:var(--max);margin:0 auto;padding:0 20px}
+  svg{flex-shrink:0}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:50;background:rgba(11,18,32,.85);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+  .logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.15rem}
+  .logo-mark{width:38px;height:38px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),var(--accent));display:grid;place-items:center;color:#06101f}
+  .menu{display:flex;gap:28px;font-weight:500;color:var(--muted)}
+  .menu a:hover{color:var(--text)}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 20px;border-radius:999px;font-weight:600;border:1px solid transparent;cursor:pointer;font-size:1rem;transition:transform .15s,background .15s}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-wa{background:var(--accent);color:#04120a}
+  .btn-wa:hover{background:#2bd968}
+  .btn-ghost{border-color:var(--line);color:var(--text);background:transparent}
+  .btn-ghost:hover{background:var(--card)}
+  .nav .btn{padding:10px 16px;font-size:.95rem}
+
+  /* Hero */
+  .hero{padding:88px 0 72px;background:radial-gradient(900px 400px at 80% -10%,rgba(56,189,248,.18),transparent),radial-gradient(700px 400px at 0% 110%,rgba(34,197,94,.12),transparent)}
+  .hero-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:48px;align-items:center}
+  .tag{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border-radius:999px;background:rgba(34,197,94,.12);color:var(--accent);font-weight:600;font-size:.88rem;margin-bottom:20px}
+  .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px rgba(34,197,94,.2)}
+  h1{font-size:clamp(2.1rem,4.6vw,3.4rem);line-height:1.12;font-weight:800;letter-spacing:-.02em;margin-bottom:18px}
+  h1 span{background:linear-gradient(90deg,var(--accent2),var(--accent));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lead{font-size:1.15rem;color:var(--muted);max-width:560px;margin-bottom:30px}
+  .cta{display:flex;flex-wrap:wrap;gap:12px}
+  .trust{display:flex;flex-wrap:wrap;gap:22px;margin-top:34px;color:var(--muted);font-size:.95rem}
+  .trust div{display:flex;align-items:center;gap:8px}
+  .trust svg{color:var(--accent)}
+  .hero-card{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:28px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5)}
+  .hero-card h3{font-size:1.05rem;margin-bottom:16px}
+  .status{display:flex;flex-direction:column;gap:12px}
+  .status-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);font-size:.95rem}
+  .pill{font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+  .p-ok{background:rgba(34,197,94,.15);color:var(--accent)}
+  .p-go{background:rgba(56,189,248,.15);color:var(--accent2)}
+  .p-wait{background:rgba(250,204,21,.15);color:#facc15}
+
+  /* Sections */
+  section{padding:84px 0}
+  .alt{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+  .head{text-align:center;max-width:640px;margin:0 auto 48px}
+  .eyebrow{color:var(--accent2);font-weight:700;font-size:.85rem;text-transform:uppercase;letter-spacing:.1em}
+  h2{font-size:clamp(1.7rem,3.2vw,2.4rem);line-height:1.2;font-weight:800;letter-spacing:-.01em;margin:8px 0 12px}
+  .head p{color:var(--muted)}
+
+  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;transition:border-color .2s,transform .2s}
+  .card:hover{border-color:#34507f;transform:translateY(-3px)}
+  .icon{width:50px;height:50px;border-radius:12px;display:grid;place-items:center;background:rgba(56,189,248,.12);color:var(--accent2);margin-bottom:18px}
+  .card h3{font-size:1.12rem;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:.96rem;margin-bottom:14px}
+  .card ul{list-style:none;display:flex;flex-direction:column;gap:6px;font-size:.92rem}
+  .card li{display:flex;gap:8px;align-items:flex-start}
+  .card li::before{content:"";width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:9px;flex-shrink:0}
+
+  .steps .num{width:42px;height:42px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:linear-gradient(135deg,var(--accent2),var(--accent));color:#06101f;margin-bottom:16px}
+
+  .why{display:grid;grid-template-columns:repeat(4,1fr);gap:20px}
+  .why .card{text-align:left}
+  .why .icon{background:rgba(34,197,94,.12);color:var(--accent)}
+
+  /* FAQ */
+  .faq{max-width:780px;margin:0 auto;display:flex;flex-direction:column;gap:12px}
+  details{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 22px}
+  summary{cursor:pointer;font-weight:600;list-style:none;display:flex;justify-content:space-between;gap:16px}
+  summary::-webkit-details-marker{display:none}
+  summary::after{content:"+";color:var(--accent2);font-size:1.4rem;line-height:1}
+  details[open] summary::after{content:"–"}
+  details p{color:var(--muted);margin-top:10px}
+
+  /* Contact */
+  .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+  .info{display:flex;flex-direction:column;gap:14px}
+  .info-item{display:flex;gap:14px;align-items:flex-start;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px}
+  .info-item .icon{margin:0;width:44px;height:44px}
+  .info-item small{color:var(--muted);display:block;font-size:.85rem}
+  .info-item strong{font-weight:600}
+  form{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px;display:flex;flex-direction:column;gap:14px}
+  form h3{font-size:1.2rem}
+  label{font-size:.9rem;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+  input,select,textarea{font:inherit;color:var(--text);background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;width:100%}
+  input:focus,select:focus,textarea:focus{outline:2px solid var(--accent2);outline-offset:1px}
+  textarea{min-height:110px;resize:vertical}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  form .btn{justify-content:center;margin-top:4px}
+  .note{font-size:.82rem;color:var(--muted);text-align:center}
+
+  footer{padding:36px 0;border-top:1px solid var(--line);color:var(--muted);font-size:.9rem}
+  .foot{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+
+  .float-wa{position:fixed;right:20px;bottom:20px;z-index:60;width:60px;height:60px;border-radius:50%;background:#25d366;display:grid;place-items:center;box-shadow:0 10px 30px rgba(0,0,0,.4);color:#fff;transition:transform .2s}
+  .float-wa:hover{transform:scale(1.08)}
+
+  @media (max-width:960px){
+    .hero-grid,.contact-grid{grid-template-columns:1fr}
+    .grid4,.why{grid-template-columns:repeat(2,1fr)}
+    .grid3{grid-template-columns:1fr}
+    .menu{display:none}
+  }
+  @media (max-width:560px){
+    .grid4,.why,.row2{grid-template-columns:1fr}
+    section{padding:64px 0}
+    .hero{padding:56px 0}
+    .nav .btn span{display:none}
+    .wrap{padding:0 16px}
+  }
+</style>
+</head>
+<body>
+
+<!-- =====================================================================
+     EDITE AQUI OS DADOS DO SEU NEGÓCIO (no bloco CONFIG, no fim do arquivo)
+     ===================================================================== -->
+
+<header>
+  <div class="wrap nav">
+    <a href="#inicio" class="logo">
+      <span class="logo-mark"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg></span>
+      <span data-cfg="nome">Sua Assistência</span>
+    </a>
+    <nav class="menu">
+      <a href="#servicos">Serviços</a>
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#duvidas">Dúvidas</a>
+      <a href="#contato">Contato</a>
+    </nav>
+    <a class="btn btn-wa js-wa" href="#" target="_blank" rel="noopener">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>
+      <span>Orçamento</span>
+    </a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="inicio">
+  <div class="wrap hero-grid">
+    <div>
+      <div class="tag"><span class="dot"></span>Atendimento em <span data-cfg="cidade">sua cidade</span></div>
+      <h1>Seu computador <span>rápido e funcionando</span> de novo.</h1>
+      <p class="lead">Conserto de computadores e notebooks com diagnóstico transparente, orçamento antes de qualquer serviço e garantia no que fazemos.</p>
+      <div class="cta">
+        <a class="btn btn-wa js-wa" href="#" target="_blank" rel="noopener">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>
+          Pedir orçamento no WhatsApp
+        </a>
+        <a class="btn btn-ghost" href="#servicos">Ver serviços</a>
+      </div>
+      <div class="trust">
+        <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Orçamento sem compromisso</div>
+        <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Garantia no serviço</div>
+        <div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6 9 17l-5-5"/></svg>Seus dados preservados</div>
+      </div>
+    </div>
+    <div class="hero-card" aria-hidden="true">
+      <h3>Acompanhamento do seu equipamento</h3>
+      <div class="status">
+        <div class="status-row">Notebook – troca de tela<span class="pill p-ok">Pronto</span></div>
+        <div class="status-row">PC gamer – limpeza + pasta térmica<span class="pill p-go">Em serviço</span></div>
+        <div class="status-row">Notebook – upgrade SSD 480GB<span class="pill p-go">Em serviço</span></div>
+        <div class="status-row">Desktop – formatação + backup<span class="pill p-wait">Aguardando aprovação</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVIÇOS -->
+<section id="servicos">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Serviços</div>
+      <h2>O que podemos fazer pelo seu equipamento</h2>
+      <p>Atendemos computadores de mesa e notebooks de todas as marcas.</p>
+    </div>
+    <div class="grid4">
+      <div class="card">
+        <div class="icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 5h18v11H3z"/><path d="M7 20h10M10 16v4M14 16v4"/><path d="m9 10 2 2 4-4"/></svg></div>
+        <h3>Formatação e Windows</h3>
+        <p>Sistema limpo e atualizado, sem perder o que importa.</p>
+        <ul>
+          <li>Instalação do Windows</li>
+          <li>Backup de arquivos e fotos</li>
+          <li>Drivers e programas essenciais</li>
+          <li>Remoção de vírus</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v4M12 18v4M4.9 4.9l2.8 2.8M16.3 16.3l2.8 2.8M2 12h4M18 12h4M4.9 19.1l2.8-2.8M16.3 7.7l2.8-2.8"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <h3>Limpeza e manutenção</h3>
+        <p>Acabe com superaquecimento, barulho e travamentos.</p>
+        <ul>
+          <li>Limpeza interna completa</li>
+          <li>Troca de pasta térmica</li>
+          <li>Revisão de coolers</li>
+          <li>Manutenção preventiva</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 1v3M15 1v3M9 20v3M15 20v3M20 9h3M20 14h3M1 9h3M1 14h3"/></svg></div>
+        <h3>Upgrade de hardware</h3>
+        <p>Deixe seu computador até 10x mais rápido.</p>
+        <ul>
+          <li>Instalação de SSD</li>
+          <li>Aumento de memória RAM</li>
+          <li>Placa de vídeo e fonte</li>
+          <li>Montagem de PC sob medida</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h16v10H4z"/><path d="M2 19h20"/><path d="m14.5 8.5-3 3M11.5 8.5l3 3"/></svg></div>
+        <h3>Notebooks e reparos</h3>
+        <p>Reparos com peças de qualidade e teste completo.</p>
+        <ul>
+          <li>Troca de tela e teclado</li>
+          <li>Bateria e carregador</li>
+          <li>Carcaça e dobradiças</li>
+          <li>Reparo de placa-mãe</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="alt" id="como-funciona">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Como funciona</div>
+      <h2>Simples, rápido e sem surpresas</h2>
+    </div>
+    <div class="grid3 steps">
+      <div class="card">
+        <div class="num">1</div>
+        <h3>Fale com a gente</h3>
+        <p>Conte o problema pelo WhatsApp ou traga o equipamento. Tiramos suas dúvidas na hora.</p>
+      </div>
+      <div class="card">
+        <div class="num">2</div>
+        <h3>Diagnóstico e orçamento</h3>
+        <p>Avaliamos o equipamento e enviamos o orçamento detalhado. Só fazemos o serviço com sua aprovação.</p>
+      </div>
+      <div class="card">
+        <div class="num">3</div>
+        <h3>Conserto com garantia</h3>
+        <p>Executamos o serviço, testamos tudo e você retira seu equipamento funcionando, com garantia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIFERENCIAIS -->
+<section>
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Por que nos escolher</div>
+      <h2>Atendimento honesto de quem entende</h2>
+    </div>
+    <div class="why">
+      <div class="card">
+        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+        <h3>Garantia</h3>
+        <p>Todos os serviços têm garantia por escrito.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+        <h3>Agilidade</h3>
+        <p>Muitos serviços ficam prontos no mesmo dia.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Privacidade</h3>
+        <p>Seus arquivos e dados são tratados com sigilo.</p>
+      </div>
+      <div class="card">
+        <div class="icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-6 0v4"/><path d="M5 9h14l-1 12H6z"/></svg></div>
+        <h3>Preço justo</h3>
+        <p>Orçamento claro, sem cobranças escondidas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="alt" id="duvidas">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Dúvidas frequentes</div>
+      <h2>Perguntas comuns</h2>
+    </div>
+    <div class="faq">
+      <details><summary>O orçamento é cobrado?</summary><p>Não. Avaliamos o equipamento e enviamos o orçamento sem compromisso. Você só paga se aprovar o serviço.</p></details>
+      <details><summary>Vou perder meus arquivos na formatação?</summary><p>Não, desde que o disco esteja funcionando. Fazemos backup dos seus documentos, fotos e arquivos importantes antes de formatar.</p></details>
+      <details><summary>Quanto tempo demora o conserto?</summary><p>Formatação, limpeza e upgrades costumam ficar prontos em até 24h. Reparos que dependem de peças podem levar alguns dias — informamos o prazo no orçamento.</p></details>
+      <details><summary>Vale a pena colocar SSD no meu computador antigo?</summary><p>Na maioria dos casos, sim. A troca do HD por SSD é o upgrade que mais aumenta a velocidade, com o menor custo.</p></details>
+      <details><summary>Vocês dão garantia?</summary><p>Sim. Todos os serviços e peças têm garantia, informada no orçamento e na nota de entrega.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CONTATO -->
+<section id="contato">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Contato</div>
+      <h2>Peça seu orçamento agora</h2>
+      <p>Preencha e envie direto para o nosso WhatsApp.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="info">
+        <a class="info-item js-wa" href="#" target="_blank" rel="noopener">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg></div>
+          <div><small>WhatsApp</small><strong data-cfg="whatsappExibicao">(11) 90000-0000</strong></div>
+        </a>
+        <div class="info-item">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s7-6.2 7-12a7 7 0 0 0-14 0c0 5.8 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/></svg></div>
+          <div><small>Endereço</small><strong data-cfg="endereco">Rua Exemplo, 123 – Bairro, Cidade/UF</strong></div>
+        </div>
+        <div class="info-item">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+          <div><small>Horário de atendimento</small><strong data-cfg="horario">Seg a Sex 9h–18h · Sáb 9h–13h</strong></div>
+        </div>
+        <a class="info-item" id="insta" href="#" target="_blank" rel="noopener">
+          <div class="icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r="1" fill="currentColor"/></svg></div>
+          <div><small>Instagram</small><strong data-cfg="instagram">@suaassistencia</strong></div>
+        </a>
+      </div>
+
+      <form id="orcamento">
+        <h3>Solicitar orçamento</h3>
+        <div class="row2">
+          <label>Seu nome<input name="nome" required placeholder="Como podemos te chamar?"></label>
+          <label>Equipamento
+            <select name="equip">
+              <option>Notebook</option>
+              <option>Computador de mesa</option>
+              <option>All-in-one</option>
+              <option>Outro</option>
+            </select>
+          </label>
+        </div>
+        <label>Serviço
+          <select name="servico">
+            <option>Formatação e Windows</option>
+            <option>Limpeza e manutenção</option>
+            <option>Upgrade de hardware (SSD, memória, etc.)</option>
+            <option>Reparo de notebook (tela, teclado, bateria...)</option>
+            <option>Não sei, preciso de diagnóstico</option>
+          </select>
+        </label>
+        <label>Descreva o problema<textarea name="problema" placeholder="Ex.: notebook Dell lento e esquentando muito"></textarea></label>
+        <button class="btn btn-wa" type="submit">Enviar pelo WhatsApp</button>
+        <p class="note">Ao enviar, o WhatsApp abre com sua mensagem pronta.</p>
+      </form>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div>© <span id="ano"></span> <span data-cfg="nome">Sua Assistência</span>. Todos os direitos reservados.</div>
+    <div>Conserto de computadores e notebooks</div>
+  </div>
+</footer>
+
+<a class="float-wa js-wa" href="#" target="_blank" rel="noopener" aria-label="Falar no WhatsApp">
+  <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor"><path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/></svg>
+</a>
+
+<script>
+/* ============================================================
+   CONFIGURAÇÃO — troque pelos dados reais do seu negócio
+   ============================================================ */
+const CONFIG = {
+  nome: "Sua Assistência",
+  cidade: "sua cidade",
+  whatsapp: "5511900000000",          // DDI + DDD + número, só dígitos
+  whatsappExibicao: "(11) 90000-0000",
+  endereco: "Rua Exemplo, 123 – Bairro, Cidade/UF",
+  horario: "Seg a Sex 9h–18h · Sáb 9h–13h",
+  instagram: "@suaassistencia"
+};
+/* ============================================================ */
+
+document.querySelectorAll("[data-cfg]").forEach(el => {
+  const v = CONFIG[el.dataset.cfg];
+  if (v) el.textContent = v;
+});
+document.title = CONFIG.nome + " – Conserto de Computadores e Notebooks";
+document.getElementById("ano").textContent = new Date().getFullYear();
+
+const waLink = msg => "https://wa.me/" + CONFIG.whatsapp + "?text=" + encodeURIComponent(msg);
+const msgPadrao = "Olá! Vi o site da " + CONFIG.nome + " e gostaria de um orçamento.";
+document.querySelectorAll(".js-wa").forEach(a => a.href = waLink(msgPadrao));
+document.getElementById("insta").href = "https://instagram.com/" + CONFIG.instagram.replace("@", "");
+
+document.getElementById("orcamento").addEventListener("submit", e => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const msg =
+    "Olá! Gostaria de um orçamento.\n\n" +
+    "*Nome:* " + f.get("nome") + "\n" +
+    "*Equipamento:* " + f.get("equip") + "\n" +
+    "*Serviço:* " + f.get("servico") + "\n" +
+    "*Problema:* " + (f.get("problema") || "-");
+  window.open(waLink(msg), "_blank");
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,17 @@
+{
+  "name": "CamargoTech - Assistência Técnica Especializada",
+  "short_name": "CamargoTech",
+  "description": "Tecnologia consertada com confiança. Especialistas em celulares, notebooks e computadores.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A1929",
+  "theme_color": "#FF6B1A",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

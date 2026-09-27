@@ -1,0 +1,77 @@
+---
+---
+
+<div id="ct-toast" class="toast-box" role="status" aria-live="polite">
+  <div class="toast-inner">
+    <div class="toast-icon" id="toast-icon">✓</div>
+    <div class="toast-message" id="toast-msg">Notificação</div>
+  </div>
+</div>
+
+<style>
+  .toast-box {
+    position: fixed;
+    top: 5.5rem;
+    right: 1.5rem;
+    z-index: 1000;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-15px);
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .toast-box.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  .toast-inner {
+    background: var(--ct-surface-card);
+    border: 1px solid var(--ct-border);
+    color: var(--ct-text-main);
+    padding: 0.85rem 1.25rem;
+    border-radius: var(--ct-radius-md);
+    box-shadow: var(--ct-shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+  }
+
+  .toast-icon {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--ct-green-500);
+    color: #fff;
+    display: grid;
+    place-items: center;
+    font-size: 0.85rem;
+  }
+</style>
+
+<script>
+  (window as any).showToast = function(msg: string, isError = false) {
+    const toast = document.getElementById('ct-toast');
+    const msgEl = document.getElementById('toast-msg');
+    const iconEl = document.getElementById('toast-icon');
+
+    if (!toast || !msgEl || !iconEl) return;
+
+    msgEl.textContent = msg;
+    if (isError) {
+      iconEl.textContent = '!';
+      iconEl.style.background = 'var(--ct-error)';
+    } else {
+      iconEl.textContent = '✓';
+      iconEl.style.background = 'var(--ct-green-500)';
+    }
+
+    toast.classList.add('show');
+    setTimeout(() => {
+      toast.classList.remove('show');
+    }, 4000);
+  };
+</script>

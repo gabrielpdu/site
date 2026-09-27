@@ -1,0 +1,225 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Map from '../components/Map.astro';
+---
+
+<BaseLayout 
+  title="Contato & Orçamento Rápido | CamargoTech" 
+  description="Entre em contato com a CamargoTech. Envie seu pedido de orçamento para conserto de celular, notebook ou computador. Atendimento presencial e online."
+  activePage="contato"
+>
+  <div class="section-head" style="padding-top: 4rem;">
+    <span class="badge badge-orange">Canais de Atendimento</span>
+    <h1>Fale com a CamargoTech</h1>
+    <p>Estamos prontos para diagnosticar seu equipamento e tirar todas as suas dúvidas técnicas.</p>
+  </div>
+
+  <section class="container" style="margin-bottom: 5rem;">
+    <div class="contact-page-grid">
+      <!-- Contact Cards -->
+      <div class="contact-details">
+        <div class="card detail-card">
+          <div class="detail-icon">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.5 14.4c-.3-.1-1.8-.9-2-1-.3-.1-.5-.1-.7.1-.2.3-.8 1-.9 1.2-.2.2-.3.2-.6.1-.3-.1-1.3-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.1.2 2.1 3.2 5.1 4.5.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z"/>
+            </svg>
+          </div>
+          <div>
+            <h3>WhatsApp Técnico</h3>
+            <p>Tire dúvidas e envie fotos do defeito para uma pré-análise imediata.</p>
+            <a href="https://wa.me/5544988424935" target="_blank" rel="noopener noreferrer" class="contact-link">
+              (44) 98842-4935 →
+            </a>
+          </div>
+        </div>
+
+        <div class="card detail-card">
+          <div class="detail-icon icon-blue">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+              <polyline points="22,6 12,13 2,6"></polyline>
+            </svg>
+          </div>
+          <div>
+            <h3>E-mail Corporativo</h3>
+            <p>Para laudos formais, orçamentos para empresas e faturamento via boleto.</p>
+            <a href="mailto:techcamargo@techcamargo.com.br" class="contact-link">
+              techcamargo@techcamargo.com.br →
+            </a>
+          </div>
+        </div>
+
+        <div class="card detail-card">
+          <div class="detail-icon icon-green">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </div>
+          <div>
+            <h3>Laboratório Presencial</h3>
+            <p>Rua das Tecnologias, 500 - Centro, São Paulo - SP</p>
+            <span class="hours-tag">Seg a Sex 08:30 às 18:30 | Sáb 09:00 às 13:00</span>
+          </div>
+        </div>
+
+        <!-- Coleta Expressa com consulta de CEP -->
+        <div class="card detail-card cep-calculator" x-data="{ cep: '', address: null, loading: false, error: false,
+          async checkCep() {
+            const clean = this.cep.replace(/\D/g, '');
+            if (clean.length !== 8) return;
+            this.loading = true;
+            this.error = false;
+            try {
+              const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+              const data = await res.json();
+              if (data.erro) {
+                this.error = true;
+                this.address = null;
+              } else {
+                this.address = data;
+              }
+            } catch (e) {
+              this.error = true;
+            } finally {
+              this.loading = false;
+            }
+          }
+        }">
+          <h3>Simular Coleta por Motoboy</h3>
+          <p>Consulte se o seu CEP é atendido pelo nosso serviço de busca e entrega expressa.</p>
+          <div class="cep-input-group">
+            <input 
+              type="text" 
+              x-model="cep" 
+              @input="if (cep.length >= 8) checkCep()" 
+              class="form-input" 
+              placeholder="Digite seu CEP (Ex: 01001-000)" 
+              maxlength="9"
+            />
+            <button type="button" @click="checkCep()" class="btn btn-outline">Consultar</button>
+          </div>
+          <div x-show="loading" class="cep-result" x-cloak>Buscando endereço...</div>
+          <div x-show="address" class="cep-result cep-success" x-cloak>
+            <span>✓ Atendido por coleta expressa:</span>
+            <strong x-text="`${address?.logradouro || ''}, ${address?.bairro || ''} - ${address?.localidade || ''}/${address?.uf || ''}`"></strong>
+          </div>
+          <div x-show="error" class="cep-result cep-error" x-cloak>
+            CEP não localizado. Verifique e tente novamente.
+          </div>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div>
+        <ContactForm />
+      </div>
+    </div>
+  </section>
+
+  <!-- Location Map -->
+  <Map />
+</BaseLayout>
+
+<style>
+  .contact-page-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 3.5rem;
+    align-items: start;
+  }
+
+  .contact-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .detail-card {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .detail-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: var(--ct-radius-md);
+    background: rgba(37, 211, 102, 0.15);
+    color: #25D366;
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .icon-blue {
+    background: rgba(30, 111, 191, 0.15);
+    color: var(--ct-blue-300);
+  }
+
+  .icon-green {
+    background: rgba(20, 184, 122, 0.15);
+    color: var(--ct-green-400);
+  }
+
+  .detail-card h3 {
+    font-size: 1.15rem;
+    margin-bottom: 0.25rem;
+    color: var(--ct-text-main);
+  }
+
+  .detail-card p {
+    color: var(--ct-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .contact-link {
+    color: var(--ct-orange-400);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .hours-tag {
+    font-size: 0.85rem;
+    color: var(--ct-text-muted);
+    font-weight: 600;
+  }
+
+  .cep-calculator {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .cep-input-group {
+    display: flex;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .cep-result {
+    font-size: 0.88rem;
+    margin-top: 0.5rem;
+  }
+
+  .cep-success {
+    color: var(--ct-green-400);
+  }
+
+  .cep-success strong {
+    display: block;
+    color: var(--ct-text-main);
+  }
+
+  .cep-error {
+    color: var(--ct-error);
+  }
+
+  @media (max-width: 900px) {
+    .contact-page-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

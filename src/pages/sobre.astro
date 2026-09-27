@@ -1,0 +1,205 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Sobre a CamargoTech | História, Valores e Garantia" 
+  description="Conheça a história da CamargoTech, nossa oficina especializada, equipe técnica certificada e nosso compromisso de 90 dias de garantia."
+  activePage="sobre"
+>
+  <div class="section-head" style="padding-top: 4rem;">
+    <span class="badge badge-orange">Nossa Trajetória</span>
+    <h1>Sobre a CamargoTech</h1>
+    <p>Mais de uma década consertando tecnologia com precisão, transparência e respeito ao cliente.</p>
+  </div>
+
+  <section class="container" style="margin-bottom: 5rem;">
+    <div class="about-grid">
+      <div class="about-story">
+        <h2>Da paixão por eletrônica a uma referência técnica</h2>
+        <p>
+          Fundada com o propósito de transformar a relação das pessoas com a assistência técnica, a <strong>CamargoTech</strong> nasceu para acabar com os orçamentos abusivos, a falta de clareza e o medo de ter peças trocadas indevidamente.
+        </p>
+        <p>
+          Investimos constantemente em equipamentos de diagnóstico de nível laboratorial: microscópios de alta definição, câmeras térmicas para detecção de curtos invisíveis, gravadores de eprom e estações de retrabalho BGA.
+        </p>
+        <p>
+          Hoje, atendemos desde o usuário que precisa do celular para trabalhar até empresas que dependem da estabilidade de seus servidores e notebooks corporativos.
+        </p>
+
+        <div class="about-metrics">
+          <div class="m-box">
+            <strong>+5.800</strong>
+            <span>Aparelhos Recuperados</span>
+          </div>
+          <div class="m-box">
+            <strong>90 Dias</strong>
+            <span>Garantia Legal por Escrito</span>
+          </div>
+          <div class="m-box">
+            <strong>99.4%</strong>
+            <span>Satisfação Comprovada</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-visual">
+        <div class="lab-card">
+          <div class="lab-badge">Laboratório Próprio</div>
+          <h3>Padrões Técnicos Rígidos</h3>
+          <ul class="lab-list">
+            <li>
+              <strong>Bancadas ESD Antiestáticas:</strong>
+              Proteção absoluta contra descargas eletrostáticas que podem danificar microprocessadores sensíveis.
+            </li>
+            <li>
+              <strong>Câmera Térmica Flir:</strong>
+              Identificação instantânea de capacitores em fuga e superaquecimento de circuitos integrados.
+            </li>
+            <li>
+              <strong>Estação de Retrabalho Quick & JBC:</strong>
+              Solda milimétrica com controle térmico preciso, preservando as trilhas da placa-mãe.
+            </li>
+            <li>
+              <strong>Armazenamento Criptografado de Backups:</strong>
+              Seus arquivos ficam armazenados em unidades isoladas e protegidas durante o reparo.
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mission, Vision, Values -->
+  <section class="section section-alt">
+    <div class="container">
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon card-icon-orange">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 14 14"></polyline>
+            </svg>
+          </div>
+          <h3>Nossa Missão</h3>
+          <p style="color: var(--ct-text-muted); line-height: 1.6;">
+            Devolver a vida útil aos dispositivos eletrônicos com agilidade e ética, promovendo a sustentabilidade ao evitar o descarte desnecessário de equipamentos no meio ambiente.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+            </svg>
+          </div>
+          <h3>Nossa Visão</h3>
+          <p style="color: var(--ct-text-muted); line-height: 1.6;">
+            Ser o laboratório de assistência técnica mais confiável do estado de São Paulo, reconhecido pela excelência em microeletrônica e transparência absoluta no relacionamento com o cliente.
+          </p>
+        </div>
+
+        <div class="card">
+          <div class="card-icon card-icon-green">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+            </svg>
+          </div>
+          <h3>Nossos Valores</h3>
+          <p style="color: var(--ct-text-muted); line-height: 1.6;">
+            Honestidade acima de tudo, respeito irrestrito à privacidade dos dados alheios, clareza técnica e busca contínua por aperfeiçoamento nos novos padrões de tecnologia.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr;
+    gap: 3.5rem;
+    align-items: center;
+  }
+
+  .about-story h2 {
+    font-size: 2rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .about-story p {
+    color: var(--ct-text-muted);
+    font-size: 1.05rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .about-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--ct-border);
+  }
+
+  .m-box strong {
+    display: block;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--ct-orange-500);
+  }
+
+  .m-box span {
+    font-size: 0.85rem;
+    color: var(--ct-text-muted);
+  }
+
+  .lab-card {
+    background: var(--ct-surface-card);
+    border: 1px solid var(--ct-border);
+    border-radius: var(--ct-radius-lg);
+    padding: 2.25rem;
+    box-shadow: var(--ct-shadow-lg);
+    position: relative;
+  }
+
+  .lab-badge {
+    position: absolute;
+    top: -12px;
+    right: 24px;
+    background: var(--ct-blue-500);
+    color: #fff;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--ct-radius-full);
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+
+  .lab-card h3 {
+    font-size: 1.35rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .lab-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    font-size: 0.95rem;
+    color: var(--ct-text-muted);
+  }
+
+  .lab-list strong {
+    color: var(--ct-text-main);
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+
+  @media (max-width: 900px) {
+    .about-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,146 @@
+---
+interface Props {
+  id: string;
+  title: string;
+  turnaround: string;
+  priceRange: string;
+  details: string;
+  includes: string[];
+}
+
+const { id, title, turnaround, priceRange, details, includes } = Astro.props;
+---
+
+<dialog id={`modal-${id}`} class="ct-dialog" aria-labelledby={`title-${id}`}>
+  <div class="modal-content">
+    <button 
+      type="button" 
+      class="modal-close" 
+      onclick={`document.getElementById('modal-${id}').close()`}
+      aria-label="Fechar janela"
+    >
+      &times;
+    </button>
+
+    <div class="modal-header">
+      <span class="badge badge-orange">CamargoTech Especialistas</span>
+      <h3 id={`title-${id}`} class="modal-title">{title}</h3>
+    </div>
+
+    <div class="modal-body">
+      <p class="modal-desc">{details}</p>
+
+      <div class="modal-specs">
+        <div class="spec-card">
+          <small>Prazo estimado</small>
+          <strong>{turnaround}</strong>
+        </div>
+        <div class="spec-card">
+          <small>Estimativa de investimento</small>
+          <strong class="highlight-price">{priceRange}</strong>
+        </div>
+      </div>
+
+      <h4 class="specs-title">O que está incluso neste serviço:</h4>
+      <ul class="specs-list">
+        {includes.map(item => (
+          <li>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ct-green-500)" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+
+    <div class="modal-footer">
+      <a href={`/contato?servico=${encodeURIComponent(title)}`} class="btn btn-primary" style="flex: 1; justify-content: center;">
+        Solicitar Este Serviço
+      </a>
+      <button 
+        type="button" 
+        class="btn btn-outline" 
+        onclick={`document.getElementById('modal-${id}').close()`}
+      >
+        Fechar
+      </button>
+    </div>
+  </div>
+</dialog>
+
+<style>
+  .modal-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .modal-title {
+    font-size: 1.45rem;
+    color: var(--ct-text-main);
+    margin-top: 0.5rem;
+  }
+
+  .modal-desc {
+    color: var(--ct-text-muted);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .modal-specs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .spec-card {
+    background: var(--ct-surface);
+    border: 1px solid var(--ct-border);
+    border-radius: var(--ct-radius-sm);
+    padding: 0.85rem 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .spec-card small {
+    color: var(--ct-text-muted);
+    font-size: 0.8rem;
+  }
+
+  .spec-card strong {
+    font-size: 1.05rem;
+    color: var(--ct-text-main);
+  }
+
+  .highlight-price {
+    color: var(--ct-orange-400) !important;
+  }
+
+  .specs-title {
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+    color: var(--ct-text-main);
+  }
+
+  .specs-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--ct-text-muted);
+    margin-bottom: 2rem;
+  }
+
+  .specs-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .modal-footer {
+    display: flex;
+    gap: 0.75rem;
+  }
+</style>

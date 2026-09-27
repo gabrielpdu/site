@@ -1,0 +1,79 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout 
+  title="Termos de Serviço & Condições de Garantia | CamargoTech" 
+  description="Termos de prestação de serviços técnicos, condições da garantia legal de 90 dias e normas de atendimento da CamargoTech."
+  activePage="termos"
+>
+  <div class="section-head" style="padding-top: 4rem;">
+    <span class="badge badge-orange">Transparência Contratual</span>
+    <h1>Termos de Serviço</h1>
+    <p>Condições gerais para prestação de assistência técnica e manutenção de eletrônicos.</p>
+  </div>
+
+  <section class="container" style="max-width: 860px; margin-bottom: 5rem;">
+    <div class="card legal-doc">
+      <h2>1. Do Diagnóstico e Orçamento</h2>
+      <p>
+        O diagnóstico preliminar e a emissão do orçamento pela <strong>CamargoTech</strong> são isentos de taxas prévias. O início dos trabalhos de reparo ocorrerá exclusivamente após autorização escrita, eletrônica ou por mensagem de WhatsApp do proprietário do dispositivo.
+      </p>
+
+      <h2>2. Da Garantia Legal de 90 Dias</h2>
+      <p>
+        Todos os serviços realizados e peças substituídas contam com <strong>garantia de 90 (noventa) dias</strong>, conforme previsto no Artigo 26 do Código de Defesa do Consumidor (CDC), a contar da data de retirada do equipamento.
+      </p>
+      <ul>
+        <li>A garantia cobre exclusivamente o defeito relatado e corrigido na Ordem de Serviço (OS).</li>
+        <li>A garantia perde a validade em caso de danos físicos posteriores (quedas, trincados, tela quebrada), rompimento dos lacres internos da CamargoTech, oxidação decorrente de umidade ou contato com líquidos, ou intervenção técnica efetuada por terceiros não autorizados.</li>
+      </ul>
+
+      <h2>3. Da Retirada e Armazenamento</h2>
+      <p>
+        Após a notificação formal de conclusão do serviço enviada por WhatsApp e/ou E-mail, o cliente terá até 90 dias para retirar seu equipamento ou autorizar o envio por motoboy/correio mediante quitação dos valores acordados.
+      </p>
+
+      <h2>4. Do Foro</h2>
+      <p>
+        Para dirimir eventuais controvérsias decorrentes destes Termos, fica eleito o Foro da Comarca da Capital do Estado de São Paulo, com renúncia expressa a qualquer outro.
+      </p>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .legal-doc {
+    padding: 3rem;
+    line-height: 1.8;
+  }
+
+  .legal-doc h2 {
+    font-size: 1.35rem;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    color: var(--ct-text-main);
+  }
+
+  .legal-doc p {
+    color: var(--ct-text-muted);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+  }
+
+  .legal-doc ul {
+    margin-left: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--ct-text-muted);
+  }
+
+  .legal-doc li {
+    margin-bottom: 0.5rem;
+  }
+
+  @media (max-width: 600px) {
+    .legal-doc {
+      padding: 1.75rem;
+    }
+  }
+</style>

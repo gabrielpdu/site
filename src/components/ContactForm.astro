@@ -1,0 +1,257 @@
+---
+---
+
+<div class="contact-form-container" x-data="{
+  nome: '',
+  email: '',
+  telefone: '',
+  aparelho: 'celular',
+  servico: 'Troca de Tela / Bateria',
+  descricao: '',
+  lgpd: false,
+  errors: {},
+  submitted: false,
+  formatPhone(e) {
+    let v = e.target.value.replace(/\D/g, '');
+    if (v.length > 11) v = v.slice(0, 11);
+    if (v.length > 6) {
+      this.telefone = `(${v.slice(0,2)}) ${v.slice(2,7)}-${v.slice(7)}`;
+    } else if (v.length > 2) {
+      this.telefone = `(${v.slice(0,2)}) ${v.slice(2)}`;
+    } else {
+      this.telefone = v;
+    }
+  },
+  handleSubmit() {
+    this.errors = {};
+    if (!this.nome || this.nome.length < 2) this.errors.nome = 'Informe seu nome completo';
+    if (!this.email || !this.email.includes('@')) this.errors.email = 'Informe um e-mail válido';
+    if (!this.telefone || this.telefone.length < 14) this.errors.telefone = 'Informe um WhatsApp válido com DDD';
+    if (!this.descricao || this.descricao.length < 8) this.errors.descricao = 'Descreva brevemente o problema';
+    if (!this.lgpd) this.errors.lgpd = 'Você precisa autorizar os termos da LGPD para contato';
+
+    if (Object.keys(this.errors).length === 0) {
+      this.submitted = true;
+      const zapMsg = `*Solicitação de Orçamento - CamargoTech*\n\n` +
+        `👤 *Nome:* ${this.nome}\n` +
+        `📱 *WhatsApp:* ${this.telefone}\n` +
+        `✉️ *E-mail:* ${this.email}\n` +
+        `🔧 *Aparelho:* ${this.aparelho.toUpperCase()}\n` +
+        `⚙️ *Serviço:* ${this.servico}\n` +
+        `📝 *Problema:* ${this.descricao}`;
+      
+      const zapUrl = `https://wa.me/5544988424935?text=${encodeURIComponent(zapMsg)}`;
+      setTimeout(() => {
+        window.open(zapUrl, '_blank');
+      }, 500);
+    }
+  }
+}">
+  <form @submit.prevent="handleSubmit" class="quote-form" novalidate>
+    <div class="form-header">
+      <h3>Solicitar Orçamento Gratuito</h3>
+      <p>Receba a estimativa técnica em minutos pelo WhatsApp ou E-mail.</p>
+    </div>
+
+    <!-- Alert / Live region -->
+    <div aria-live="polite" class="sr-only" x-text="submitted ? 'Formulário enviado com sucesso para a equipe CamargoTech' : ''"></div>
+
+    <div x-show="submitted" class="success-banner" x-cloak>
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+      </svg>
+      <div>
+        <strong>Orçamento gerado com sucesso!</strong>
+        <p>Abrindo o WhatsApp da CamargoTech com sua solicitação pré-formatada...</p>
+      </div>
+    </div>
+
+    <div class="grid-2 form-row">
+      <div class="form-group">
+        <label class="form-label" for="ct-nome">Nome Completo *</label>
+        <input 
+          type="text" 
+          id="ct-nome" 
+          name="nome" 
+          x-model="nome" 
+          class="form-input" 
+          placeholder="Ex: Carlos Eduardo" 
+          required
+        />
+        <span class="form-error" x-text="errors.nome" x-show="errors.nome"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ct-email">E-mail para Orçamento *</label>
+        <input 
+          type="email" 
+          id="ct-email" 
+          name="email" 
+          x-model="email" 
+          class="form-input" 
+          placeholder="seuemail@exemplo.com" 
+          required
+        />
+        <span class="form-error" x-text="errors.email" x-show="errors.email"></span>
+      </div>
+    </div>
+
+    <div class="grid-2 form-row">
+      <div class="form-group">
+        <label class="form-label" for="ct-tel">WhatsApp com DDD *</label>
+        <input 
+          type="tel" 
+          id="ct-tel" 
+          name="telefone" 
+          x-model="telefone" 
+          @input="formatPhone" 
+          class="form-input" 
+          placeholder="(44) 98842-4935" 
+          required
+        />
+        <span class="form-error" x-text="errors.telefone" x-show="errors.telefone"></span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="ct-aparelho">Tipo de Equipamento *</label>
+        <select id="ct-aparelho" name="aparelho" x-model="aparelho" class="form-select">
+          <option value="celular">Celular / Smartphone</option>
+          <option value="notebook">Notebook / Laptop</option>
+          <option value="pc">Computador / Desktop Gamer</option>
+          <option value="outro">Outro Eletrônico</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="ct-servico">Serviço Pretendido</label>
+      <select id="ct-servico" name="servico" x-model="servico" class="form-select">
+        <option value="Conserto de Celulares">Conserto de Celulares</option>
+        <option value="Conserto de Notebooks/PCs">Conserto de Notebooks e PCs</option>
+        <option value="Formatação e Windows">Formatação e Instalação de Sistema</option>
+        <option value="Recuperação de Dados">Recuperação de Dados em HD/SSD</option>
+        <option value="Troca de Tela / Bateria">Troca de Tela ou Bateria</option>
+        <option value="Manutenção Preventiva">Manutenção Preventiva / Limpeza Térmica</option>
+        <option value="Outro / Diagnóstico">Não sei o problema, preciso de diagnóstico</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label" for="ct-desc">Descreva o Defeito ou Sintomas *</label>
+      <textarea 
+        id="ct-desc" 
+        name="descricao" 
+        x-model="descricao" 
+        class="form-textarea" 
+        rows="4" 
+        placeholder="Ex: O notebook liga os coolers mas não dá vídeo na tela..."
+        required
+      ></textarea>
+      <span class="form-error" x-text="errors.descricao" x-show="errors.descricao"></span>
+    </div>
+
+    <!-- LGPD Consent Checkbox -->
+    <div class="form-group lgpd-group">
+      <label class="checkbox-label">
+        <input type="checkbox" name="lgpd" x-model="lgpd" class="form-checkbox" />
+        <span>Concordo com o tratamento dos meus dados conforme a <a href="/politica-privacidade" target="_blank" class="legal-link">Política de Privacidade (LGPD)</a> da CamargoTech para envio do orçamento.</span>
+      </label>
+      <span class="form-error" x-text="errors.lgpd" x-show="errors.lgpd"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary submit-btn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+      <span>Enviar Solicitação de Orçamento</span>
+    </button>
+  </form>
+</div>
+
+<style>
+  .quote-form {
+    background: var(--ct-surface-card);
+    border: 1px solid var(--ct-border);
+    border-radius: var(--ct-radius-lg);
+    padding: 2.5rem;
+    box-shadow: var(--ct-shadow-lg);
+  }
+
+  .form-header {
+    margin-bottom: 2rem;
+  }
+
+  .form-header h3 {
+    font-size: 1.5rem;
+    color: var(--ct-text-main);
+  }
+
+  .form-header p {
+    color: var(--ct-text-muted);
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+  }
+
+  .form-row {
+    gap: 1.5rem;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--ct-text-muted);
+    cursor: pointer;
+  }
+
+  .form-checkbox {
+    margin-top: 3px;
+    accent-color: var(--ct-orange-500);
+    width: 18px;
+    height: 18px;
+  }
+
+  .legal-link {
+    color: var(--ct-orange-400);
+    text-decoration: underline;
+  }
+
+  .submit-btn {
+    width: 100%;
+    padding: 0.95rem;
+    font-size: 1.05rem;
+    margin-top: 1rem;
+  }
+
+  .success-banner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    background: rgba(20, 184, 122, 0.15);
+    border: 1px solid rgba(20, 184, 122, 0.35);
+    border-radius: var(--ct-radius-md);
+    padding: 1rem 1.25rem;
+    color: var(--ct-green-400);
+    margin-bottom: 1.5rem;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    border: 0;
+  }
+
+  @media (max-width: 600px) {
+    .quote-form {
+      padding: 1.5rem;
+    }
+  }
+</style>

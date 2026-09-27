@@ -1,0 +1,208 @@
+---
+---
+
+<section class="section" id="localizacao">
+  <div class="container">
+    <div class="section-head">
+      <span class="badge badge-orange">Venha nos Visitar</span>
+      <h2>Nossa Localização & Laboratório</h2>
+      <p>Espaço preparado com equipamentos de ponta para receber seu dispositivo com todo conforto e segurança.</p>
+    </div>
+
+    <div class="map-layout">
+      <!-- Contact Info Card -->
+      <div class="location-card">
+        <h3>CamargoTech Oficina & Showroom</h3>
+        <p class="loc-subtitle">Atendimento presencial e recebimento via motoboy ou transportadora.</p>
+
+        <div class="info-items-list">
+          <div class="info-block">
+            <div class="info-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <div>
+              <strong>Endereço Completo</strong>
+              <span>Rua das Tecnologias, 500 - Centro, São Paulo - SP</span>
+            </div>
+          </div>
+
+          <div class="info-block">
+            <div class="info-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+            </div>
+            <div>
+              <strong>Horário de Funcionamento</strong>
+              <span>Segunda a Sexta: 08:30 às 18:30<br>Sábados: 09:00 às 13:00</span>
+            </div>
+          </div>
+
+          <div class="info-block">
+            <div class="info-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
+              </svg>
+            </div>
+            <div>
+              <strong>Telefone & WhatsApp</strong>
+              <span>+55 (44) 98842-4935</span>
+            </div>
+          </div>
+        </div>
+
+        <a href="https://maps.google.com" target="_blank" rel="noopener noreferrer" class="btn btn-outline" style="width: 100%; justify-content: center; margin-top: 1.5rem;">
+          Abrir no Google Maps
+        </a>
+      </div>
+
+      <!-- Lazy Loaded Map Container -->
+      <div class="map-interactive" x-data="{ loaded: false }">
+        <div x-show="!loaded" class="map-placeholder">
+          <div class="placeholder-icon">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--ct-orange-500)" stroke-width="2">
+              <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+              <line x1="8" y1="2" x2="8" y2="18"></line>
+              <line x1="16" y1="6" x2="16" y2="22"></line>
+            </svg>
+          </div>
+          <h4>Visualizar no Mapa Interativo</h4>
+          <p>Clique no botão abaixo para carregar o mapa (respeitando sua privacidade e economia de dados).</p>
+          <button type="button" @click="loaded = true" class="btn btn-primary" style="margin-top: 1rem;">
+            Carregar Mapa
+          </button>
+        </div>
+
+        <template x-if="loaded">
+          <iframe 
+            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3657.1066964353457!2d-46.6565711!3d-23.5646162!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjPCsDMzJzUyLjYiUyA0NsKwMzknMjMuNyJX!5e0!3m2!1spt-BR!2sbr!4v1620000000000!5m2!1spt-BR!2sbr" 
+            width="100%" 
+            height="100%" 
+            style="border:0; min-height: 380px; border-radius: var(--ct-radius-md);" 
+            allowfullscreen="" 
+            loading="lazy" 
+            referrerpolicy="no-referrer-when-downgrade"
+            title="Localização da CamargoTech"
+          ></iframe>
+        </template>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .map-layout {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 2.5rem;
+    align-items: stretch;
+  }
+
+  .location-card {
+    background: var(--ct-surface-card);
+    border: 1px solid var(--ct-border);
+    border-radius: var(--ct-radius-lg);
+    padding: 2.25rem;
+    box-shadow: var(--ct-shadow-md);
+  }
+
+  .location-card h3 {
+    font-size: 1.4rem;
+    color: var(--ct-text-main);
+  }
+
+  .loc-subtitle {
+    color: var(--ct-text-muted);
+    font-size: 0.95rem;
+    margin-top: 0.25rem;
+    margin-bottom: 2rem;
+  }
+
+  .info-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .info-block {
+    display: flex;
+    gap: 1.25rem;
+    align-items: flex-start;
+  }
+
+  .info-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--ct-radius-sm);
+    background: rgba(30, 111, 191, 0.15);
+    color: var(--ct-blue-300);
+    display: grid;
+    place-items: center;
+    flex-shrink: 0;
+  }
+
+  .info-block strong {
+    display: block;
+    font-size: 0.95rem;
+    color: var(--ct-text-main);
+    margin-bottom: 0.2rem;
+  }
+
+  .info-block span {
+    font-size: 0.9rem;
+    color: var(--ct-text-muted);
+    line-height: 1.5;
+  }
+
+  .map-interactive {
+    background: var(--ct-surface-card);
+    border: 1px solid var(--ct-border);
+    border-radius: var(--ct-radius-lg);
+    overflow: hidden;
+    min-height: 400px;
+    position: relative;
+    display: flex;
+    align-items: stretch;
+  }
+
+  .map-placeholder {
+    width: 100%;
+    padding: 3rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .placeholder-icon {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    background: rgba(255, 107, 26, 0.15);
+    display: grid;
+    place-items: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .map-placeholder h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .map-placeholder p {
+    color: var(--ct-text-muted);
+    font-size: 0.95rem;
+    max-width: 380px;
+  }
+
+  @media (max-width: 900px) {
+    .map-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
