@@ -59,7 +59,7 @@ import Map from '../components/Map.astro';
           </div>
           <div>
             <h3>Laboratório Presencial</h3>
-            <p>Rua das Tecnologias, 500 - Centro, São Paulo - SP</p>
+            <p>Centro, Paiçandu - PR (CEP 87140-000)</p>
             <span class="hours-tag">Seg a Sex 08:30 às 18:30 | Sáb 09:00 às 13:00</span>
           </div>
         </div>
@@ -95,7 +95,7 @@ import Map from '../components/Map.astro';
               x-model="cep" 
               @input="if (cep.length >= 8) checkCep()" 
               class="form-input" 
-              placeholder="Digite seu CEP (Ex: 01001-000)" 
+              placeholder="Digite seu CEP (Ex: 87140-000)" 
               maxlength="9"
             />
             <button type="button" @click="checkCep()" class="btn btn-outline">Consultar</button>
