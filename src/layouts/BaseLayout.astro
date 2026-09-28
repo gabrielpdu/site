@@ -95,11 +95,15 @@ const schemaJsonLD = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
 
-    <!-- Alpine.js -->
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.14.8/dist/cdn.min.js"></script>
+    <!-- Alpine.js (bundled from npm, no third-party CDN) -->
+    <script>
+      import Alpine from 'alpinejs';
+      window.Alpine = Alpine;
+      Alpine.start();
+    </script>
 
-    <!-- Schema.org JSON-LD -->
-    <script type="application/ld+json" set:html={JSON.stringify(schemaJsonLD)} />
+    <!-- Schema.org JSON-LD (escape "<" so the payload can never close the script tag) -->
+    <script type="application/ld+json" set:html={JSON.stringify(schemaJsonLD).replace(/</g, '\\u003c')} />
 
     <!-- Prevent Theme Flash -->
     <script is:inline>
