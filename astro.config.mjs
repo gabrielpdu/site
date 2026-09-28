@@ -5,7 +5,6 @@ export default defineConfig({
   site: 'https://techcamargo.com.br',
   compressHTML: true,
   server: {
-    host: true,
     port: 4321
   }
 });

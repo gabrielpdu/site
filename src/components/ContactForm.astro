@@ -22,27 +22,39 @@
       this.telefone = v;
     }
   },
+  aparelhos: ['celular', 'notebook', 'pc', 'outro'],
+  servicos: ['Conserto de Celulares', 'Conserto de Notebooks/PCs', 'Formatação e Windows', 'Recuperação de Dados', 'Troca de Tela / Bateria', 'Manutenção Preventiva', 'Outro / Diagnóstico'],
+  clean(v, max) {
+    return String(v).replace(/[\u0000-\u0009\u000B-\u001F\u007F]/g, '').trim().slice(0, max);
+  },
   handleSubmit() {
     this.errors = {};
-    if (!this.nome || this.nome.length < 2) this.errors.nome = 'Informe seu nome completo';
-    if (!this.email || !this.email.includes('@')) this.errors.email = 'Informe um e-mail válido';
-    if (!this.telefone || this.telefone.length < 14) this.errors.telefone = 'Informe um WhatsApp válido com DDD';
-    if (!this.descricao || this.descricao.length < 8) this.errors.descricao = 'Descreva brevemente o problema';
+    const nome = this.clean(this.nome, 100);
+    const email = this.clean(this.email, 120);
+    const telefone = this.clean(this.telefone, 16);
+    const descricao = this.clean(this.descricao, 1000);
+    if (nome.length < 2) this.errors.nome = 'Informe seu nome completo';
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) this.errors.email = 'Informe um e-mail válido';
+    if (!/^\(\d{2}\) \d{4,5}-\d{4}$/.test(telefone)) this.errors.telefone = 'Informe um WhatsApp válido com DDD';
+    if (descricao.length < 8) this.errors.descricao = 'Descreva brevemente o problema';
     if (!this.lgpd) this.errors.lgpd = 'Você precisa autorizar os termos da LGPD para contato';
+    // Only allow values from the fixed option lists (the DOM can be tampered with).
+    const aparelho = this.aparelhos.includes(this.aparelho) ? this.aparelho : 'outro';
+    const servico = this.servicos.includes(this.servico) ? this.servico : 'Outro / Diagnóstico';
 
     if (Object.keys(this.errors).length === 0) {
       this.submitted = true;
       const zapMsg = `*Solicitação de Orçamento - CamargoTech*\n\n` +
-        `👤 *Nome:* ${this.nome}\n` +
-        `📱 *WhatsApp:* ${this.telefone}\n` +
-        `✉️ *E-mail:* ${this.email}\n` +
-        `🔧 *Aparelho:* ${this.aparelho.toUpperCase()}\n` +
-        `⚙️ *Serviço:* ${this.servico}\n` +
-        `📝 *Problema:* ${this.descricao}`;
-      
+        `👤 *Nome:* ${nome}\n` +
+        `📱 *WhatsApp:* ${telefone}\n` +
+        `✉️ *E-mail:* ${email}\n` +
+        `🔧 *Aparelho:* ${aparelho.toUpperCase()}\n` +
+        `⚙️ *Serviço:* ${servico}\n` +
+        `📝 *Problema:* ${descricao}`;
+
       const zapUrl = `https://wa.me/5544988424935?text=${encodeURIComponent(zapMsg)}`;
       setTimeout(() => {
-        window.open(zapUrl, '_blank');
+        window.open(zapUrl, '_blank', 'noopener,noreferrer');
       }, 500);
     }
   }
@@ -72,7 +84,7 @@
         <label class="form-label" for="ct-nome">Nome Completo *</label>
         <input 
           type="text" 
-          id="ct-nome" 
+          id="ct-nome" maxlength="100" autocomplete="name" 
           name="nome" 
           x-model="nome" 
           class="form-input" 
@@ -86,7 +98,7 @@
         <label class="form-label" for="ct-email">E-mail para Orçamento *</label>
         <input 
           type="email" 
-          id="ct-email" 
+          id="ct-email" maxlength="120" autocomplete="email" 
           name="email" 
           x-model="email" 
           class="form-input" 
@@ -102,7 +114,7 @@
         <label class="form-label" for="ct-tel">WhatsApp com DDD *</label>
         <input 
           type="tel" 
-          id="ct-tel" 
+          id="ct-tel" maxlength="16" autocomplete="tel" 
           name="telefone" 
           x-model="telefone" 
           @input="formatPhone" 
@@ -140,7 +152,7 @@
     <div class="form-group">
       <label class="form-label" for="ct-desc">Descreva o Defeito ou Sintomas *</label>
       <textarea 
-        id="ct-desc" 
+        id="ct-desc" maxlength="1000" 
         name="descricao" 
         x-model="descricao" 
         class="form-textarea" 
@@ -155,7 +167,7 @@
     <div class="form-group lgpd-group">
       <label class="checkbox-label">
         <input type="checkbox" name="lgpd" x-model="lgpd" class="form-checkbox" />
-        <span>Concordo com o tratamento dos meus dados conforme a <a href="/politica-privacidade" target="_blank" class="legal-link">Política de Privacidade (LGPD)</a> da CamargoTech para envio do orçamento.</span>
+        <span>Concordo com o tratamento dos meus dados conforme a <a href="/politica-privacidade" target="_blank" rel="noopener" class="legal-link">Política de Privacidade (LGPD)</a> da CamargoTech para envio do orçamento.</span>
       </label>
       <span class="form-error" x-text="errors.lgpd" x-show="errors.lgpd"></span>
     </div>
