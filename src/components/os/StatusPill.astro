@@ -1,0 +1,18 @@
+---
+interface Props {
+  status: string;
+}
+
+const { status } = Astro.props;
+
+const classe =
+  status === 'Pronto para Retirada' || status === 'Entregue'
+    ? 'pill-ready'
+    : status === 'Em Reparo' || status === 'Aguardando Aprovação'
+      ? 'pill-repair'
+      : status === 'Cancelada'
+        ? 'pill-muted'
+        : '';
+---
+
+<span class:list={['pill-status', classe]}>{status}</span>

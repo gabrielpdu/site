@@ -1,0 +1,35 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import OsDetalhe from '../../../components/os/OsDetalhe.astro';
+import { atorDe, repoOs } from '../../../lib/sessao';
+import '../../../styles/os.css';
+
+export const prerender = false;
+
+const ator = atorDe(Astro.locals.user);
+if (!ator || !ator.emailVerified) return Astro.redirect('/area-cliente', 303);
+
+// `buscar` já restringe ao e-mail do cliente: OS de outra pessoa = "não encontrada".
+const os = await repoOs.buscar(Astro.params.id ?? '', ator);
+if (!os) Astro.response.status = 404;
+
+const criada = Astro.url.searchParams.has('criada');
+---
+
+<BaseLayout title={os ? `OS ${os.id} | CamargoTech` : 'OS não encontrada | CamargoTech'} description="Acompanhamento da ordem de serviço." activePage="area-cliente">
+  <section class="container os-page" style="padding-top: 3rem;">
+    <a href="/area-cliente" class="os-back">← Voltar para minhas OS</a>
+    {!os && (
+      <div class="card os-empty">
+        <p>Ordem de serviço não encontrada na sua conta.</p>
+        <p>Se a OS foi aberta no balcão com outro e-mail, fale com a equipe pelo WhatsApp.</p>
+      </div>
+    )}
+    {os && criada && (
+      <p class="os-notice os-notice-ok" role="status">
+        OS <strong>{os.id}</strong> aberta com sucesso! A equipe vai analisar e falar com você pelo WhatsApp.
+      </p>
+    )}
+    {os && <OsDetalhe os={os} />}
+  </section>
+</BaseLayout>
