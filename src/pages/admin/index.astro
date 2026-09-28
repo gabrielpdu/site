@@ -1,0 +1,72 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusPill from '../../components/os/StatusPill.astro';
+import { atorDe, repoOs } from '../../lib/sessao';
+import { STATUS_OS } from '../../lib/db/schema';
+import { data } from '../../lib/formato';
+import '../../styles/os.css';
+
+export const prerender = false;
+
+const ator = atorDe(Astro.locals.user);
+if (!ator) return Astro.redirect('/area-cliente', 303);
+// Não revela que a rota existe para quem não é da equipe.
+if (!ator.admin) return new Response('Página não encontrada', { status: 404 });
+
+const busca = (Astro.url.searchParams.get('busca') ?? '').trim().slice(0, 100);
+const statusParam = Astro.url.searchParams.get('status') ?? '';
+const status = (STATUS_OS as readonly string[]).includes(statusParam) ? statusParam : '';
+const ordens = await repoOs.listarTodas(ator, { busca, status });
+---
+
+<BaseLayout title="Painel da Equipe | CamargoTech" description="Gestão de ordens de serviço." activePage="area-cliente">
+  <section class="container os-page" style="padding-top: 3rem; max-width: 1100px;">
+    <div class="os-toolbar">
+      <h1 style="font-size: 1.8rem;">Painel da Equipe</h1>
+      <div class="os-toolbar-actions">
+        <a href="/area-cliente" class="btn btn-outline">Minha área</a>
+        <a href="/admin/nova" class="btn btn-primary">+ Cadastrar OS de balcão</a>
+      </div>
+    </div>
+
+    <form method="GET" class="os-filtros" role="search">
+      <input type="search" name="busca" class="form-input" placeholder="Buscar por nº da OS, cliente, e-mail ou modelo" value={busca} maxlength="100" aria-label="Buscar OS" />
+      <select name="status" class="form-select" aria-label="Filtrar por status">
+        <option value="">Todos os status</option>
+        {STATUS_OS.map((s) => <option value={s} selected={s === status}>{s}</option>)}
+      </select>
+      <button type="submit" class="btn btn-secondary">Filtrar</button>
+    </form>
+
+    <div class="card os-table-wrap">
+      {ordens.length === 0 ? (
+        <p class="os-empty">Nenhuma OS encontrada.</p>
+      ) : (
+        <table class="os-table">
+          <thead>
+            <tr>
+              <th scope="col">OS</th>
+              <th scope="col">Cliente</th>
+              <th scope="col">Aparelho</th>
+              <th scope="col">Status</th>
+              <th scope="col">Entrada</th>
+              <th scope="col">Origem</th>
+            </tr>
+          </thead>
+          <tbody>
+            {ordens.map((os) => (
+              <tr>
+                <td><a href={`/admin/os/${encodeURIComponent(os.id)}`}><strong>{os.id}</strong></a></td>
+                <td>{os.clienteNome}<br /><small>{os.clienteEmail}</small></td>
+                <td>{os.marcaModelo}</td>
+                <td><StatusPill status={os.status} /></td>
+                <td>{data(os.criadoEm)}</td>
+                <td>{os.criadoPor === 'cliente' ? 'Site' : 'Balcão'}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+    </div>
+  </section>
+</BaseLayout>
