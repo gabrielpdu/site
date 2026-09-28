@@ -1,0 +1,113 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StatusPill from '../../components/os/StatusPill.astro';
+import { googleConfigurado } from '../../lib/auth';
+import { atorDe, repoOs } from '../../lib/sessao';
+import { APARELHO_LABEL, data } from '../../lib/formato';
+import '../../styles/os.css';
+
+export const prerender = false;
+
+const ator = atorDe(Astro.locals.user);
+const user = Astro.locals.user;
+const erro = Astro.url.searchParams.get('erro');
+
+const ordens = ator?.emailVerified ? await repoOs.listarDoCliente(ator) : [];
+
+const mensagensErro: Record<string, string> = {
+  login: 'Não foi possível entrar com o Google. Tente novamente.',
+  config: 'O login com Google ainda não foi configurado. Fale com a equipe pelo WhatsApp.',
+};
+---
+
+<BaseLayout
+  title="Área do Cliente & Acompanhamento de OS | CamargoTech"
+  description="Entre com sua conta Google para acompanhar e abrir ordens de serviço na CamargoTech."
+  activePage="area-cliente"
+>
+  <div class="section-head" style="padding-top: 4rem;">
+    <span class="badge badge-orange">Portal de Transparência</span>
+    <h1>Área do Cliente CamargoTech</h1>
+    <p>Acompanhe cada etapa do diagnóstico e conserto do seu dispositivo com total clareza.</p>
+  </div>
+
+  <section class="container os-page">
+    {erro && mensagensErro[erro] && <p class="os-notice" role="alert">{mensagensErro[erro]}</p>}
+
+    {!user && (
+      <div class="card os-login">
+        <h2>Entre para ver suas ordens de serviço</h2>
+        <p>Use a mesma conta Google (Gmail) informada no balcão. Assim suas OS aparecem automaticamente, e você também pode abrir novas.</p>
+        <form method="POST" action="/area-cliente/entrar">
+          <button type="submit" class="btn-google">
+            <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
+              <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
+              <path fill="#4285F4" d="M46.98 24.55c0-1.57-.15-3.09-.38-4.55H24v9.02h12.94c-.58 2.96-2.26 5.48-4.78 7.18l7.73 6c4.51-4.18 7.09-10.36 7.09-17.65z"/>
+              <path fill="#FBBC05" d="M10.53 28.59c-.48-1.45-.76-2.99-.76-4.59s.27-3.14.76-4.59l-7.98-6.19C.92 16.46 0 20.12 0 24c0 3.88.92 7.54 2.56 10.78l7.97-6.19z"/>
+              <path fill="#34A853" d="M24 48c6.48 0 11.93-2.13 15.89-5.81l-7.73-6c-2.15 1.45-4.92 2.3-8.16 2.3-6.26 0-11.57-4.22-13.47-9.91l-7.98 6.19C6.51 42.62 14.62 48 24 48z"/>
+            </svg>
+            <span>Entrar com Google</span>
+          </button>
+        </form>
+        {!googleConfigurado && <small>(Login Google ainda não configurado neste ambiente.)</small>}
+        <small>
+          Ao entrar, você concorda com a <a href="/politica-privacidade">Política de Privacidade</a> e os <a href="/termos">Termos de Uso</a>.
+          Usamos apenas seu nome, e-mail e foto do Google.
+        </small>
+      </div>
+    )}
+
+    {user && (
+      <>
+        <div class="os-toolbar">
+          <div class="os-user">
+            {user.image && <img src={user.image} alt="" referrerpolicy="no-referrer" width="40" height="40" />}
+            <div>
+              <strong>Olá, {user.name.split(' ')[0]}!</strong>
+              <small>{user.email}</small>
+            </div>
+          </div>
+          <div class="os-toolbar-actions">
+            {ator?.admin && <a href="/admin" class="btn btn-outline">Painel da Equipe</a>}
+            {ator?.emailVerified && <a href="/area-cliente/nova" class="btn btn-primary">+ Abrir nova OS</a>}
+            <form method="POST" action="/area-cliente/sair">
+              <button type="submit" class="btn btn-secondary">Sair</button>
+            </form>
+          </div>
+        </div>
+
+        {!ator?.emailVerified && (
+          <p class="os-notice" role="alert">
+            Seu e-mail Google ainda não está verificado. Por segurança, só mostramos ordens de serviço para contas verificadas.
+          </p>
+        )}
+
+        {ator?.emailVerified && ordens.length === 0 && (
+          <div class="card os-empty">
+            <p>Nenhuma ordem de serviço encontrada para <strong>{user.email}</strong>.</p>
+            <p>Deixou um aparelho no balcão com outro e-mail? Fale com a equipe pelo WhatsApp para vincularmos.</p>
+            <a href="/area-cliente/nova" class="btn btn-primary">Abrir minha primeira OS</a>
+          </div>
+        )}
+
+        {ordens.length > 0 && (
+          <div class="os-list">
+            {ordens.map((os) => (
+              <a href={`/area-cliente/os/${encodeURIComponent(os.id)}`} class="card os-item">
+                <div>
+                  <span class="badge badge-orange">{os.id}</span>
+                  <h3>{os.marcaModelo}</h3>
+                  <small>{APARELHO_LABEL[os.aparelho]} · Entrada em {data(os.criadoEm)}</small>
+                </div>
+                <StatusPill status={os.status} />
+                <div class="progress-track" aria-hidden="true">
+                  <div class="progress-fill" style={`width: ${os.percentual}%`}></div>
+                </div>
+              </a>
+            ))}
+          </div>
+        )}
+      </>
+    )}
+  </section>
+</BaseLayout>

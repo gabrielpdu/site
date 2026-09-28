@@ -1,0 +1,85 @@
+---
+import StatusPill from './StatusPill.astro';
+import type { OsComHistorico } from '../../lib/os';
+import { APARELHO_LABEL, ATENDIMENTO_LABEL, data, dataHora, moeda } from '../../lib/formato';
+
+interface Props {
+  os: OsComHistorico;
+}
+
+const { os } = Astro.props;
+const whatsapp = `https://wa.me/5544988424935?text=${encodeURIComponent(`Olá! Gostaria de falar sobre a OS ${os.id}.`)}`;
+---
+
+<div class="card os-dashboard">
+  <div class="os-header">
+    <div>
+      <span class="badge badge-orange">{os.id}</span>
+      <h2 class="os-device-title">{os.marcaModelo}</h2>
+      <span class="os-client-name">{APARELHO_LABEL[os.aparelho]} · Cliente: {os.clienteNome}</span>
+    </div>
+    <div class="os-status-pill">
+      <StatusPill status={os.status} />
+    </div>
+  </div>
+
+  <div class="os-progress-container">
+    <div class="progress-labels">
+      <span>Progresso do Serviço</span>
+      <strong>{os.percentual}%</strong>
+    </div>
+    <div class="progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow={os.percentual} aria-label="Progresso do serviço">
+      <div class="progress-fill" style={`width: ${os.percentual}%`}></div>
+    </div>
+  </div>
+
+  <div class="os-meta-grid">
+    <div class="os-meta-item">
+      <small>Data de Entrada</small>
+      <strong>{data(os.criadoEm)}</strong>
+    </div>
+    <div class="os-meta-item">
+      <small>Previsão de Entrega</small>
+      <strong>{data(os.previsaoEntrega)}</strong>
+    </div>
+    <div class="os-meta-item">
+      <small>Técnico Responsável</small>
+      <strong>{os.tecnico ?? 'A definir'}</strong>
+    </div>
+    <div class="os-meta-item">
+      <small>Valor Total do Serviço</small>
+      <strong class="highlight-price">{moeda(os.valorCentavos)}</strong>
+    </div>
+  </div>
+
+  <div class="laudo-box">
+    <h4>Defeito Relatado</h4>
+    <p>{os.defeito}</p>
+    <p><small>Atendimento: {ATENDIMENTO_LABEL[os.atendimento]}</small></p>
+  </div>
+
+  {os.laudo && (
+    <div class="laudo-box">
+      <h4>Laudo Técnico do Laboratório</h4>
+      <p>{os.laudo}</p>
+    </div>
+  )}
+
+  <div class="history-section">
+    <h4>Linha do Tempo de Atualizações</h4>
+    <div class="history-list">
+      {os.historico.map((item) => (
+        <div class="history-item">
+          <span class="hist-time">{dataHora(item.criadoEm)}</span>
+          <span class="hist-desc">{item.evento}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+
+  <div class="os-actions">
+    <a href={whatsapp} target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">
+      <span>Falar com o Técnico no WhatsApp</span>
+    </a>
+  </div>
+</div>

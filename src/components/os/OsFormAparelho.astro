@@ -1,0 +1,53 @@
+---
+// Campos comuns aos formulários de abertura de OS (cliente e admin).
+import { APARELHO_LABEL, ATENDIMENTO_LABEL } from '../../lib/formato';
+
+interface Props {
+  valores?: Record<string, string>;
+  erros?: Record<string, string>;
+}
+
+const { valores = {}, erros = {} } = Astro.props;
+const aparelho = valores.aparelho ?? 'celular';
+const atendimento = valores.atendimento ?? 'balcao';
+---
+
+<div class="grid-2">
+  <div class="form-group">
+    <label class="form-label" for="os-telefone">WhatsApp com DDD *</label>
+    <input id="os-telefone" name="telefone" type="tel" class="form-input" required maxlength="20" autocomplete="tel" placeholder="(44) 99999-9999" value={valores.telefone ?? ''} aria-invalid={erros.telefone ? 'true' : undefined} />
+    {erros.telefone && <span class="form-error">{erros.telefone}</span>}
+  </div>
+  <div class="form-group">
+    <label class="form-label" for="os-aparelho">Tipo de Equipamento *</label>
+    <select id="os-aparelho" name="aparelho" class="form-select" required>
+      {Object.entries(APARELHO_LABEL).map(([v, label]) => <option value={v} selected={v === aparelho}>{label}</option>)}
+    </select>
+    {erros.aparelho && <span class="form-error">{erros.aparelho}</span>}
+  </div>
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="os-modelo">Marca e Modelo *</label>
+  <input id="os-modelo" name="marcaModelo" type="text" class="form-input" required minlength="2" maxlength="100" placeholder="Ex.: Samsung Galaxy S22, Dell Inspiron 15" value={valores.marcaModelo ?? ''} aria-invalid={erros.marcaModelo ? 'true' : undefined} />
+  {erros.marcaModelo && <span class="form-error">{erros.marcaModelo}</span>}
+</div>
+
+<div class="form-group">
+  <label class="form-label" for="os-defeito">Descreva o problema *</label>
+  <textarea id="os-defeito" name="defeito" class="form-textarea" required minlength="10" maxlength="2000" placeholder="O que está acontecendo? Desde quando? Houve queda ou contato com líquido?" aria-invalid={erros.defeito ? 'true' : undefined}>{valores.defeito ?? ''}</textarea>
+  {erros.defeito && <span class="form-error">{erros.defeito}</span>}
+</div>
+
+<fieldset class="form-group">
+  <legend class="form-label">Forma de atendimento *</legend>
+  <div class="os-radio-group">
+    {Object.entries(ATENDIMENTO_LABEL).map(([v, label]) => (
+      <label class="os-check">
+        <input type="radio" name="atendimento" value={v} checked={v === atendimento} required />
+        <span>{label}</span>
+      </label>
+    ))}
+  </div>
+  {erros.atendimento && <span class="form-error">{erros.atendimento}</span>}
+</fieldset>

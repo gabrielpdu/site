@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /api/
 Disallow: /area-cliente
+Disallow: /admin
 
 Sitemap: https://techcamargo.com.br/sitemap.xml

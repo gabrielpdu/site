@@ -1,7 +1,9 @@
 // Service Worker for CamargoTech PWA
 // Pages: network-first (always fresh, cache only as offline fallback).
 // Static assets: cache-first. Only same-origin GET requests are handled.
-const CACHE_NAME = 'camargotech-cache-v2';
+// Private/dynamic routes (logged-in area, admin, auth API) are NEVER cached.
+const CACHE_NAME = 'camargotech-cache-v3';
+const PRIVATE_PREFIXES = ['/area-cliente', '/admin', '/api/'];
 const ASSETS_TO_CACHE = [
   '/',
   '/servicos',
@@ -46,6 +48,8 @@ self.addEventListener('fetch', (event) => {
   const url = new URL(request.url);
   // Never intercept third-party requests (fonts, maps, WhatsApp, etc.).
   if (url.origin !== self.location.origin) return;
+  // Personal data must always come straight from the network.
+  if (PRIVATE_PREFIXES.some((p) => url.pathname.startsWith(p))) return;
 
   if (request.mode === 'navigate') {
     event.respondWith(

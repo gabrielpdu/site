@@ -20,5 +20,7 @@ pnpm-debug.log*
 Thumbs.db
 
 .vercel
+# Banco local de desenvolvimento (PGlite)
+.data/
 .env*
 !.env.example
