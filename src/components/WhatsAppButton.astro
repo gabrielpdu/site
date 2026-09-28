@@ -1,7 +1,7 @@
 ---
 const phoneNumber = "5544988424935";
 const message = "Olá! Vim pelo site da CamargoTech e gostaria de um orçamento para o meu equipamento.";
-const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+const waLink = `https://api.whatsapp.com/send?phone=${phoneNumber}&text=${encodeURIComponent(message)}`;
 ---
 
 <a 

@@ -47,12 +47,13 @@
       const zapMsg = `*Solicitação de Orçamento - CamargoTech*\n\n` +
         `👤 *Nome:* ${nome}\n` +
         `📱 *WhatsApp:* ${telefone}\n` +
-        `✉️ *E-mail:* ${email}\n` +
-        `🔧 *Aparelho:* ${aparelho.toUpperCase()}\n` +
-        `⚙️ *Serviço:* ${servico}\n` +
+        `📧 *E-mail:* ${email}\n` +
+        `💻 *Aparelho:* ${aparelho.toUpperCase()}\n` +
+        `🔧 *Serviço:* ${servico}\n` +
         `📝 *Problema:* ${descricao}`;
 
-      const zapUrl = `https://wa.me/5544988424935?text=${encodeURIComponent(zapMsg)}`;
+      // api.whatsapp.com instead of wa.me: the wa.me redirect replaces emojis with the U+FFFD replacement character.
+      const zapUrl = `https://api.whatsapp.com/send?phone=5544988424935&text=${encodeURIComponent(zapMsg)}`;
       setTimeout(() => {
         window.open(zapUrl, '_blank', 'noopener,noreferrer');
       }, 500);
