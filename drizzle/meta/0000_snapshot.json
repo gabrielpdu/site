@@ -1,5 +1,5 @@
 {
-  "id": "471cc43c-7a9f-4c3b-a21c-b3365dd67fa2",
+  "id": "7fa3df63-ccb5-47f3-b31f-9dcfda17de35",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -204,7 +204,7 @@
           "type": "text",
           "primaryKey": true,
           "notNull": true,
-          "default": "('CT-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('os_seq')::text, 4, '0'))"
+          "default": "('CT-' || to_char(now() AT TIME ZONE 'America/Sao_Paulo', 'YYYY') || '-' || regexp_replace('000' || nextval('os_seq')::text, '^0*(\\d{4,})$', '\\1'))"
         },
         "cliente_email": {
           "name": "cliente_email",

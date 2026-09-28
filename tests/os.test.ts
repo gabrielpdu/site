@@ -2,6 +2,7 @@
 // Uso: npm test
 import { before, describe, it } from 'node:test';
 import assert from 'node:assert/strict';
+import { sql } from 'drizzle-orm';
 import { createMigratedPgliteDb } from '../src/lib/db/client';
 import { ErroOs, LIMITE_OS_POR_DIA, criarRepositorioOs, type Ator, type RepositorioOs } from '../src/lib/os';
 import { AtualizarOsSchema, NovaOsAdminSchema, NovaOsClienteSchema } from '../src/scripts/validation';
@@ -104,6 +105,14 @@ describe('repositório de OS', () => {
   it('busca do admin trata % e _ como texto literal', async () => {
     assert.equal((await repo.listarTodas(admin, { busca: '%' })).length, 0);
     assert.equal((await repo.listarTodas(admin, { busca: 'ideapad' })).length, 1);
+  });
+
+  it('número da OS não é truncado após 9999', async () => {
+    const db = await createMigratedPgliteDb();
+    const r = criarRepositorioOs(db);
+    await db.execute(sql`select setval('os_seq', 9999)`);
+    const ids = [(await r.criarPeloCliente(clienteA, novaOs)).id, (await r.criarPeloCliente(clienteA, novaOs)).id];
+    assert.deepEqual(ids.map((id) => id.split('-')[2]), ['10000', '10001']);
   });
 
   it(`limita a ${LIMITE_OS_POR_DIA} OS por cliente em 24h`, async () => {

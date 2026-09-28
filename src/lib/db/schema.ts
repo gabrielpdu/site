@@ -109,9 +109,12 @@ export const ordensServico = pgTable(
   'ordens_servico',
   {
     // Ex.: CT-2026-0001. A sequência garante unicidade sem transação.
+    // Mínimo de 4 dígitos sem truncar (lpad cortaria 10000 → "1000").
     id: text('id')
       .primaryKey()
-      .default(sql`('CT-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('os_seq')::text, 4, '0'))`),
+      .default(
+        sql`('CT-' || to_char(now() AT TIME ZONE 'America/Sao_Paulo', 'YYYY') || '-' || regexp_replace('000' || nextval('os_seq')::text, '^0*(\\d{4,})$', '\\1'))`
+      ),
     // E-mail sempre em minúsculas: é a chave de vínculo com a conta Google.
     clienteEmail: text('cliente_email').notNull(),
     clienteNome: text('cliente_nome').notNull(),

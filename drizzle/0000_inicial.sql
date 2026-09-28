@@ -23,7 +23,7 @@ CREATE TABLE "historico_os" (
 );
 --> statement-breakpoint
 CREATE TABLE "ordens_servico" (
-	"id" text PRIMARY KEY DEFAULT ('CT-' || to_char(now(), 'YYYY') || '-' || lpad(nextval('os_seq')::text, 4, '0')) NOT NULL,
+	"id" text PRIMARY KEY DEFAULT ('CT-' || to_char(now() AT TIME ZONE 'America/Sao_Paulo', 'YYYY') || '-' || regexp_replace('000' || nextval('os_seq')::text, '^0*(\d{4,})$', '\1')) NOT NULL,
 	"cliente_email" text NOT NULL,
 	"cliente_nome" text NOT NULL,
 	"telefone" text NOT NULL,
