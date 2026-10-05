@@ -15,7 +15,8 @@ export default defineConfig({
   env: {
     schema: {
       DATABASE_URL: envField.string({ context: 'server', access: 'secret', optional: true }),
-      BETTER_AUTH_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),
+      // Obrigatório: sem ele o Better Auth usaria um segredo padrão (sessões forjáveis).
+      BETTER_AUTH_SECRET: envField.string({ context: 'server', access: 'secret', min: 32 }),
       BETTER_AUTH_URL: envField.string({ context: 'server', access: 'secret', optional: true }),
       GOOGLE_CLIENT_ID: envField.string({ context: 'server', access: 'secret', optional: true }),
       GOOGLE_CLIENT_SECRET: envField.string({ context: 'server', access: 'secret', optional: true }),

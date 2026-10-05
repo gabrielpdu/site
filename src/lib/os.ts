@@ -1,7 +1,7 @@
 // Acesso às ordens de serviço. TODA regra de autorização fica aqui, no servidor:
 // o cliente só enxerga OS cujo `cliente_email` é o e-mail VERIFICADO da conta
 // Google; operações administrativas exigem `ator.admin === true`.
-import { and, asc, desc, eq, gte, ilike, or, sql } from 'drizzle-orm';
+import { and, asc, desc, eq, ilike, or, sql } from 'drizzle-orm';
 import type { Db } from './db/client';
 import { historicoOs, ordensServico, type HistoricoOs, type OrdemServico } from './db/schema';
 import type { AtualizarOs, NovaOsAdmin, NovaOsCliente } from '../scripts/validation';
@@ -38,6 +38,17 @@ function exigirEmailVerificado(ator: Ator) {
 
 function exigirAdmin(ator: Ator) {
   if (!ator.admin || !ator.emailVerified) throw new ErroOs('sem_permissao', 'Acesso restrito à equipe.');
+}
+
+/** Data de hoje em São Paulo (AAAA-MM-DD), base da cota diária. */
+function diaSaoPaulo(agora: Date): string {
+  return agora.toLocaleDateString('en-CA', { timeZone: 'America/Sao_Paulo' });
+}
+
+/** Erro 23505 do Postgres (unique_violation), direto ou embrulhado pelo Drizzle. */
+function violacaoUnica(e: unknown): boolean {
+  const err = e as { code?: string; cause?: { code?: string } };
+  return err?.code === '23505' || err?.cause?.code === '23505';
 }
 
 /** Grava o endereço só quando o atendimento é coleta (ignora sobras do formulário). */
@@ -82,45 +93,50 @@ export function criarRepositorioOs(db: Db) {
     async criarPeloCliente(ator: Ator, dados: NovaOsCliente, endereco: EnderecoColeta | null = null): Promise<OrdemServico> {
       exigirEmailVerificado(ator);
       const email = emailDe(ator);
-      const umDiaAtras = new Date(Date.now() - 24 * 60 * 60 * 1000);
-      const [{ total }] = await db
-        .select({ total: sql<number>`count(*)::int` })
-        .from(ordensServico)
-        .where(
-          and(
-            eq(ordensServico.clienteEmail, email),
-            eq(ordensServico.criadoPor, 'cliente'),
-            gte(ordensServico.criadoEm, umDiaAtras)
-          )
-        );
-      if (total >= LIMITE_OS_POR_DIA) {
-        throw new ErroOs(
-          'limite_diario',
-          `Você já abriu ${LIMITE_OS_POR_DIA} OS nas últimas 24h. Fale com a equipe pelo WhatsApp.`
-        );
-      }
+      const dia = diaSaoPaulo(new Date());
+      const prefixo = `${email}|${dia}|`;
 
-      const [os] = await db
-        .insert(ordensServico)
-        .values({
-          clienteEmail: email,
-          clienteNome: ator.name,
-          telefone: dados.telefone,
-          aparelho: dados.aparelho,
-          marcaModelo: dados.marcaModelo,
-          defeito: dados.defeito,
-          atendimento: dados.atendimento,
-          ...enderecoSeColeta(dados.atendimento, endereco),
-          criadoPor: 'cliente',
-        })
-        .returning();
-      await registrarEvento(
-        os.id,
-        dados.atendimento === 'coleta'
-          ? 'OS aberta pelo cliente no site com pedido de coleta por motoboy. Aguardando contato da equipe.'
-          : 'OS aberta pelo cliente no site. Aguardando análise da equipe.'
+      // Começa pela próxima vaga provável; se outra requisição simultânea pegou a
+      // mesma, o índice único recusa e tentamos a seguinte. Sem vaga → limite.
+      const [{ usadas }] = await db
+        .select({ usadas: sql<number>`count(*)::int` })
+        .from(ordensServico)
+        .where(sql`starts_with(${ordensServico.cotaDiaria}, ${prefixo})`);
+
+      for (let vaga = usadas + 1; vaga <= LIMITE_OS_POR_DIA; vaga++) {
+        let os: OrdemServico;
+        try {
+          [os] = await db
+            .insert(ordensServico)
+            .values({
+              clienteEmail: email,
+              clienteNome: ator.name,
+              telefone: dados.telefone,
+              aparelho: dados.aparelho,
+              marcaModelo: dados.marcaModelo,
+              defeito: dados.defeito,
+              atendimento: dados.atendimento,
+              ...enderecoSeColeta(dados.atendimento, endereco),
+              criadoPor: 'cliente',
+              cotaDiaria: prefixo + vaga,
+            })
+            .returning();
+        } catch (e) {
+          if (violacaoUnica(e)) continue; // vaga ocupada por outra requisição
+          throw e;
+        }
+        await registrarEvento(
+          os.id,
+          dados.atendimento === 'coleta'
+            ? 'OS aberta pelo cliente no site com pedido de coleta por motoboy. Aguardando contato da equipe.'
+            : 'OS aberta pelo cliente no site. Aguardando análise da equipe.'
+        );
+        return os;
+      }
+      throw new ErroOs(
+        'limite_diario',
+        `Você já abriu ${LIMITE_OS_POR_DIA} OS hoje. Fale com a equipe pelo WhatsApp.`
       );
-      return os;
     },
 
     // ---------------------------------------------------------------- admin

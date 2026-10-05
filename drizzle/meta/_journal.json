@@ -15,6 +15,13 @@
       "when": 1791163896906,
       "tag": "0001_endereco_coleta",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1791165477042,
+      "tag": "0002_cota_diaria",
+      "breakpoints": true
     }
   ]
 }

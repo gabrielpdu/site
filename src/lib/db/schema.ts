@@ -139,6 +139,10 @@ export const ordensServico = pgTable(
     valorCentavos: integer('valor_centavos'),
     previsaoEntrega: timestamp('previsao_entrega', { mode: 'date' }),
     criadoPor: text('criado_por', { enum: ['cliente', 'admin'] }).notNull(),
+    // "Vaga" diária do cliente (email|AAAA-MM-DD|1..5). O índice único garante o
+    // limite de OS por dia mesmo com envios simultâneos em instâncias diferentes.
+    // NULL para OS de balcão (admin).
+    cotaDiaria: text('cota_diaria').unique(),
     criadoEm: timestamp('criado_em').notNull().defaultNow(),
     atualizadoEm: timestamp('atualizado_em').notNull().defaultNow(),
   },

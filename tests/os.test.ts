@@ -115,7 +115,7 @@ describe('repositório de OS', () => {
     assert.deepEqual(ids.map((id) => id.split('-')[2]), ['10000', '10001']);
   });
 
-  it(`limita a ${LIMITE_OS_POR_DIA} OS por cliente em 24h`, async () => {
+  it(`limita a ${LIMITE_OS_POR_DIA} OS por cliente por dia`, async () => {
     for (let i = 1; i < LIMITE_OS_POR_DIA; i++) await repo.criarPeloCliente(clienteA, novaOs);
     await falhaCom('limite_diario', () => repo.criarPeloCliente(clienteA, novaOs));
   });
@@ -149,5 +149,39 @@ describe('OS com coleta', () => {
 
     const balcao = await repo.criarPeloCliente(cliente, { ...novaOs, atendimento: 'balcao' }, endereco);
     assert.equal(balcao.cep, null, 'endereço ignorado quando não é coleta');
+  });
+});
+
+describe('validação do painel admin', () => {
+  const ok = (dados: Record<string, string>) => AtualizarOsSchema.safeParse({ status: 'Em Reparo', percentual: '10', ...dados }).success;
+  it('recusa valor gigante e aceita até R$ 9.999.999,99', () => {
+    assert.equal(ok({ valor: '9.999.999,99' }), true);
+    assert.equal(ok({ valor: '99999999999999999999' }), false);
+    assert.equal(ok({ valor: '1.000.000.000,00' }), false);
+  });
+  it('recusa datas impossíveis', () => {
+    assert.equal(ok({ previsaoEntrega: '2026-10-31' }), true);
+    for (const d of ['2026-02-30', '2026-13-01', '2026-99-99', '0001-01-01']) assert.equal(ok({ previsaoEntrega: d }), false, d);
+  });
+});
+
+describe('limite diário sob concorrência', () => {
+  it('10 envios simultâneos criam no máximo 5 OS', async () => {
+    const repo = criarRepositorioOs(await createMigratedPgliteDb());
+    const apressado: Ator = { email: 'rapido@exemplo.test', name: 'Rápido', emailVerified: true, admin: false };
+    const r = await Promise.allSettled(Array.from({ length: 10 }, () => repo.criarPeloCliente(apressado, novaOs)));
+    const ok = r.filter((x) => x.status === 'fulfilled').length;
+    const limite = r.filter((x) => x.status === 'rejected' && (x.reason as ErroOs).codigo === 'limite_diario').length;
+    assert.equal(ok, LIMITE_OS_POR_DIA);
+    assert.equal(limite, 10 - LIMITE_OS_POR_DIA, 'os demais recebem o erro de limite, não um erro genérico');
+    assert.equal((await repo.listarDoCliente(apressado)).length, LIMITE_OS_POR_DIA);
+  });
+
+  it('OS de balcão (admin) não consome a cota do cliente', async () => {
+    const repo = criarRepositorioOs(await createMigratedPgliteDb());
+    const admin: Ator = { email: 'admin@exemplo.test', name: 'Admin', emailVerified: true, admin: true };
+    const cliente: Ator = { email: 'dora@exemplo.test', name: 'Dora', emailVerified: true, admin: false };
+    for (let i = 0; i < 6; i++) await repo.criarPeloAdmin(admin, { ...novaOs, clienteNome: 'Dora', clienteEmail: 'dora@exemplo.test' });
+    await repo.criarPeloCliente(cliente, novaOs);
   });
 });
