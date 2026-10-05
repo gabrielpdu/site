@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import OsFormAparelho from '../../components/os/OsFormAparelho.astro';
+import { atorDe, repoOs } from '../../lib/sessao';
+import { NovaOsAdminSchema, errosPorCampo, formParaObjeto } from '../../scripts/validation';
+import '../../styles/os.css';
+
+export const prerender = false;
+
+const ator = atorDe(Astro.locals.user);
+if (!ator) return Astro.redirect('/area-cliente', 303);
+if (!ator.admin) return new Response('Página não encontrada', { status: 404 });
+
+let valores: Record<string, string> = {};
+let erros: Record<string, string> = {};
+
+if (Astro.request.method === 'POST') {
+  valores = formParaObjeto(await Astro.request.formData());
+  const resultado = NovaOsAdminSchema.safeParse(valores);
+  if (resultado.success) {
+    const os = await repoOs.criarPeloAdmin(ator, resultado.data);
+    return Astro.redirect(`/admin/os/${encodeURIComponent(os.id)}?criada=1`, 303);
+  }
+  erros = errosPorCampo(resultado.error);
+  Astro.response.status = 400;
+}
+---
+
+<BaseLayout title="Cadastrar OS | Painel da Equipe" description="Cadastro de OS de balcão." activePage="area-cliente">
+  <section class="container os-page" style="padding-top: 3rem; max-width: 760px;">
+    <a href="/admin" class="os-back">← Voltar ao painel</a>
+    <h1 style="font-size: 1.8rem; margin-bottom: 1rem;">Cadastrar OS de balcão</h1>
+    <p class="os-notice">
+      Use o <strong>e-mail Google (Gmail) do cliente</strong>: é por ele que a OS aparece automaticamente quando o cliente entrar no site.
+    </p>
+
+    <form method="POST" class="card os-form" novalidate>
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label" for="os-nome">Nome do cliente *</label>
+          <input id="os-nome" name="clienteNome" type="text" class="form-input" required maxlength="100" value={valores.clienteNome ?? ''} />
+          {erros.clienteNome && <span class="form-error">{erros.clienteNome}</span>}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="os-email">E-mail do cliente *</label>
+          <input id="os-email" name="clienteEmail" type="email" class="form-input" required maxlength="254" value={valores.clienteEmail ?? ''} />
+          {erros.clienteEmail && <span class="form-error">{erros.clienteEmail}</span>}
+        </div>
+      </div>
+
+      <OsFormAparelho valores={valores} erros={erros} />
+
+      <button type="submit" class="btn btn-primary">Cadastrar OS</button>
+    </form>
+  </section>
+</BaseLayout>

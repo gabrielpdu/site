@@ -32,18 +32,62 @@ Desenvolvido com foco em **performance radical, segurança por padrão e acessib
 npm install
 ```
 
-### 3. Iniciar o Servidor de Desenvolvimento
+### 3. Variáveis de ambiente
+Copie `.env.example` para `.env.local` e preencha. Para desenvolvimento, `DATABASE_URL=.data/pglite`
+usa um Postgres embutido (PGlite), sem criar conta em nenhum serviço.
+
+### 4. Banco local e dados de exemplo
+```bash
+npm run db:seed
+```
+Cria clientes/OS fictícios. Para testar logado **sem** Google, gere uma sessão de teste e cole o
+cookie impresso no navegador (DevTools → Application → Cookies):
+```bash
+npm run db:seed -- --sessao cliente.a@camargotech.test
+```
+(Usuários de teste: `cliente.a@…`, `cliente.b@…`, `admin@camargotech.test`. Pare o `npm run dev` antes de rodar o seed: o PGlite aceita um processo por vez.)
+
+### 5. Iniciar o Servidor de Desenvolvimento
 ```bash
 npm run dev
 ```
 O servidor será iniciado na porta local:
 👉 **http://localhost:4321**
 
-### 4. Build de Produção
+### 6. Testes, tipos e build
 ```bash
+npm test
+npm run check
 npm run build
-npm run preview
 ```
+
+---
+
+## 👤 Área do Cliente (login Google + ordens de serviço)
+
+- **Login:** [Better Auth](https://better-auth.com) com Google (OAuth 2.0/OIDC com `state` + PKCE). Sessão em cookie `HttpOnly`/`Secure`/`SameSite=Lax`; nenhum token no `localStorage`.
+- **Banco:** Postgres (Neon em produção, PGlite no dev) via Drizzle ORM. Schema em `src/lib/db/schema.ts`, migrações em `drizzle/`.
+- **Autorização:** toda regra fica em `src/lib/os.ts`. O cliente só vê OS cujo `cliente_email` é o **e-mail verificado** da conta Google; OS de outra pessoa retorna 404. Admin = e-mails em `ADMIN_EMAILS`.
+- **Vínculo balcão → site:** no `/admin/nova`, cadastre a OS com o Gmail do cliente; ela aparece automaticamente quando ele entrar.
+- **Proteções:** checagem de `Origin` (CSRF) nos formulários, validação Zod no servidor, limite de 5 OS/24h por cliente, rate limit do login, `Cache-Control: private, no-store` e service worker sem cache nas rotas privadas.
+- **Rotas:** `/area-cliente` (login/lista), `/area-cliente/nova`, `/area-cliente/os/[id]`, `/admin`, `/admin/nova`, `/admin/os/[id]`, `/api/auth/*`. As demais páginas continuam estáticas.
+
+### Configuração em produção (feita pelo dono do projeto)
+
+1. **Google Cloud Console** → *APIs e serviços*:
+   - *Tela de consentimento OAuth*: tipo **Externo**, nome "CamargoTech", logo, e-mail de suporte, domínio `techcamargo.com.br`, links da política de privacidade e termos. Escopos: `openid`, `email`, `profile` (não exigem verificação do Google). Publique o app ("Em produção").
+   - *Credenciais → Criar ID do cliente OAuth → Aplicativo da Web*:
+     - Origens JavaScript: `https://techcamargo.com.br` (e `http://localhost:4321` para dev)
+     - URIs de redirecionamento: `https://techcamargo.com.br/api/auth/callback/google` e `http://localhost:4321/api/auth/callback/google`
+2. **Vercel** → projeto → *Storage* → **Create Database → Neon (Postgres)** e conecte ao projeto (cria `DATABASE_URL`).
+3. **Vercel → Settings → Environment Variables** (Production e Preview):
+   `BETTER_AUTH_SECRET` (gere com `openssl rand -base64 32`), `BETTER_AUTH_URL=https://www.techcamargo.com.br`
+   (o domínio sem www redireciona para o www), `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
+   `ADMIN_EMAILS=seu@gmail.com,outro@gmail.com`.
+4. **Migrações:** rodam sozinhas no deploy de **produção** (script `vercel-build`). Previews pulam essa
+   etapa porque compartilham o mesmo banco. Se a migração falhar, o deploy falha e a versão anterior
+   continua no ar.
+5. Faça o deploy e teste: entrar com Google → abrir OS → ver no `/admin`.
 
 ---
 
@@ -62,7 +106,7 @@ npm run preview
 - **Sanitização estrita:** Nenhum input do usuário é inserido diretamente com `innerHTML`.
 - **Validação Dupla:** Schemas Zod em `src/scripts/validation.ts`.
 - **Privacidade LGPD:** Banner de consentimento com persistência local e página formal de Política de Privacidade.
-- **Auditoria de OS:** Sistema seguro para visualização de ordens de serviço.
+- **Ordens de serviço:** acesso autenticado (Google) e autorizado no servidor — veja "Área do Cliente".
 
 ---
 
@@ -72,6 +116,7 @@ npm run preview
 - `/servicos` — Tabela completa de 8 serviços, prazos, faixas de preço e modais detalhados
 - `/sobre` — História da empresa, certificações de bancada e padrões de laboratório
 - `/contato` — Formulário de orçamento com simulação de CEP (ViaCEP) e integração direta com WhatsApp
-- `/area-cliente` — Painel interativo de consulta de Ordem de Serviço (OS) com laudo técnico e progresso
+- `/area-cliente` — Login com Google; o cliente acompanha e abre as próprias Ordens de Serviço (OS)
+- `/admin` — Painel da equipe: cadastrar OS de balcão e atualizar status, laudo, valor e linha do tempo
 - `/politica-privacidade` — Termos de conformidade com a LGPD
 - `/termos` — Condições de serviço e garantia legal de 90 dias

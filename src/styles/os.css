@@ -1,0 +1,383 @@
+/* Área do Cliente / Admin — ordens de serviço */
+
+.os-page {
+  max-width: 960px;
+  margin-bottom: 5rem;
+}
+
+.os-toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.os-user {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.os-user img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.os-user small {
+  display: block;
+  color: var(--ct-text-muted);
+}
+
+.os-toolbar-actions {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.os-toolbar-actions form {
+  margin: 0;
+}
+
+.os-notice {
+  border-left: 3px solid var(--ct-orange-500);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  background: var(--ct-surface);
+  border-radius: var(--ct-radius-sm);
+}
+
+.os-notice-ok {
+  border-left-color: var(--ct-green-400);
+}
+
+.os-back {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: var(--ct-text-muted);
+}
+
+/* Login */
+.os-login {
+  max-width: 480px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.os-login h2 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.os-login p {
+  color: var(--ct-text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.os-login small {
+  display: block;
+  margin-top: 1.25rem;
+  color: var(--ct-text-muted);
+}
+
+/* Botão no padrão de marca do Google (fundo claro, logo "G" colorido). */
+.btn-google {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.8rem 1.25rem;
+  background: #fff;
+  color: #1f1f1f;
+  border: 1px solid #747775;
+  border-radius: var(--ct-radius-full);
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.btn-google:hover {
+  background: #f2f2f2;
+}
+
+.btn-google:focus-visible {
+  outline: 3px solid var(--ct-blue-500);
+  outline-offset: 2px;
+}
+
+/* Lista */
+.os-list {
+  display: grid;
+  gap: 1rem;
+}
+
+.os-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem 1rem;
+  align-items: center;
+  color: inherit;
+  text-decoration: none;
+}
+
+.os-item h3 {
+  font-size: 1.1rem;
+  margin: 0.35rem 0 0.15rem;
+}
+
+.os-item small {
+  color: var(--ct-text-muted);
+}
+
+.os-item .progress-track {
+  grid-column: 1 / -1;
+}
+
+.os-empty {
+  text-align: center;
+  color: var(--ct-text-muted);
+}
+
+/* Tabela admin */
+.os-table-wrap {
+  overflow-x: auto;
+}
+
+.os-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.os-table th,
+.os-table td {
+  text-align: left;
+  padding: 0.65rem 0.5rem;
+  border-bottom: 1px solid var(--ct-border);
+  vertical-align: top;
+}
+
+.os-table th {
+  color: var(--ct-text-muted);
+  font-weight: 600;
+}
+
+.os-filtros {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.os-filtros .form-input {
+  flex: 1 1 220px;
+}
+
+.os-filtros .form-select,
+.os-filtros .btn {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+/* Formulários */
+.os-form {
+  display: grid;
+  gap: 0.25rem;
+}
+
+.os-form .form-textarea {
+  min-height: 120px;
+}
+
+fieldset.form-group {
+  border: 0;
+  padding: 0;
+  margin-inline: 0;
+  min-width: 0;
+}
+
+.os-radio-group {
+  display: flex;
+  gap: 1.25rem;
+  flex-wrap: wrap;
+}
+
+.os-check {
+  display: flex;
+  gap: 0.6rem;
+  align-items: flex-start;
+  font-size: 0.92rem;
+  color: var(--ct-text-muted);
+}
+
+.os-check input {
+  margin-top: 0.25rem;
+}
+
+/* Detalhe (reaproveita o visual original da Área do Cliente) */
+.os-dashboard {
+  padding: 2.5rem;
+}
+
+.os-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  gap: 1.5rem;
+}
+
+.os-device-title {
+  font-size: 1.6rem;
+  margin-top: 0.5rem;
+}
+
+.os-client-name {
+  color: var(--ct-text-muted);
+  font-size: 0.95rem;
+}
+
+.os-progress-container {
+  margin-bottom: 2rem;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+}
+
+.progress-track {
+  height: 10px;
+  background: var(--ct-surface);
+  border-radius: var(--ct-radius-full);
+  overflow: hidden;
+  border: 1px solid var(--ct-border);
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--ct-blue-500), var(--ct-orange-500));
+  border-radius: var(--ct-radius-full);
+  transition: width 0.4s ease;
+}
+
+.os-meta-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+  background: var(--ct-surface);
+  padding: 1.25rem;
+  border-radius: var(--ct-radius-sm);
+  border: 1px solid var(--ct-border);
+  margin-bottom: 2rem;
+}
+
+.os-meta-item small {
+  display: block;
+  color: var(--ct-text-muted);
+  font-size: 0.8rem;
+  margin-bottom: 0.25rem;
+}
+
+.os-meta-item strong {
+  font-size: 0.95rem;
+  color: var(--ct-text-main);
+}
+
+.highlight-price {
+  color: var(--ct-orange-400) !important;
+}
+
+.laudo-box {
+  background: rgba(30, 111, 191, 0.08);
+  border: 1px solid rgba(30, 111, 191, 0.25);
+  border-radius: var(--ct-radius-sm);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.laudo-box h4 {
+  color: var(--ct-blue-300);
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.laudo-box p {
+  color: var(--ct-text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+.history-section h4 {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  border-left: 2px solid var(--ct-border);
+  padding-left: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.history-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.hist-time {
+  font-size: 0.8rem;
+  color: var(--ct-orange-400);
+  font-weight: 700;
+}
+
+.hist-desc {
+  color: var(--ct-text-main);
+  font-size: 0.95rem;
+}
+
+.pill-status {
+  display: inline-block;
+  padding: 0.4rem 0.9rem;
+  border-radius: var(--ct-radius-full);
+  font-weight: 700;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  background: rgba(30, 111, 191, 0.2);
+  color: var(--ct-blue-300);
+}
+
+.pill-repair {
+  background: rgba(255, 107, 26, 0.2);
+  color: var(--ct-orange-400);
+}
+
+.pill-ready {
+  background: rgba(20, 184, 122, 0.2);
+  color: var(--ct-green-400);
+}
+
+.pill-muted {
+  background: var(--ct-surface);
+  color: var(--ct-text-muted);
+}
+
+@media (max-width: 768px) {
+  .os-dashboard {
+    padding: 1.5rem;
+  }
+  .os-meta-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .os-header {
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,109 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+import OsDetalhe from '../../../components/os/OsDetalhe.astro';
+import { atorDe, repoOs } from '../../../lib/sessao';
+import { ErroOs } from '../../../lib/os';
+import { STATUS_OS } from '../../../lib/db/schema';
+import { dataIso, valorInput } from '../../../lib/formato';
+import { AtualizarOsSchema, errosPorCampo, formParaObjeto } from '../../../scripts/validation';
+import '../../../styles/os.css';
+
+export const prerender = false;
+
+const ator = atorDe(Astro.locals.user);
+if (!ator) return Astro.redirect('/area-cliente', 303);
+if (!ator.admin) return new Response('Página não encontrada', { status: 404 });
+
+const id = Astro.params.id ?? '';
+let erros: Record<string, string> = {};
+let valores: Record<string, string> | null = null;
+
+if (Astro.request.method === 'POST') {
+  valores = formParaObjeto(await Astro.request.formData());
+  const resultado = AtualizarOsSchema.safeParse(valores);
+  if (resultado.success) {
+    try {
+      await repoOs.atualizar(ator, id, resultado.data);
+      return Astro.redirect(`/admin/os/${encodeURIComponent(id)}?salva=1`, 303);
+    } catch (e) {
+      if (!(e instanceof ErroOs) || e.codigo !== 'nao_encontrada') throw e;
+    }
+  } else {
+    erros = errosPorCampo(resultado.error);
+    Astro.response.status = 400;
+  }
+}
+
+const os = await repoOs.buscar(id, ator);
+if (!os) return new Response('OS não encontrada', { status: 404 });
+
+const v = valores ?? {
+  status: os.status,
+  percentual: String(os.percentual),
+  tecnico: os.tecnico ?? '',
+  laudo: os.laudo ?? '',
+  valor: valorInput(os.valorCentavos),
+  previsaoEntrega: dataIso(os.previsaoEntrega),
+  evento: '',
+};
+const aviso = Astro.url.searchParams.has('criada') ? 'OS cadastrada.' : Astro.url.searchParams.has('salva') ? 'Alterações salvas.' : '';
+---
+
+<BaseLayout title={`OS ${os.id} | Painel da Equipe`} description="Gestão de ordem de serviço." activePage="area-cliente">
+  <section class="container os-page" style="padding-top: 3rem;">
+    <a href="/admin" class="os-back">← Voltar ao painel</a>
+    {aviso && <p class="os-notice os-notice-ok" role="status">{aviso}</p>}
+
+    <form method="POST" class="card os-form" style="margin-bottom: 2rem;" novalidate>
+      <h2 style="font-size: 1.3rem;">Atualizar OS {os.id}</h2>
+      <p class="os-client-name">{os.clienteNome} · {os.clienteEmail} · {os.telefone}</p>
+
+      <div class="grid-2">
+        <div class="form-group">
+          <label class="form-label" for="a-status">Status *</label>
+          <select id="a-status" name="status" class="form-select">
+            {STATUS_OS.map((s) => <option value={s} selected={s === v.status}>{s}</option>)}
+          </select>
+          {erros.status && <span class="form-error">{erros.status}</span>}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="a-percentual">Progresso (%) *</label>
+          <input id="a-percentual" name="percentual" type="number" min="0" max="100" step="5" class="form-input" value={v.percentual} />
+          {erros.percentual && <span class="form-error">{erros.percentual}</span>}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="a-tecnico">Técnico responsável</label>
+          <input id="a-tecnico" name="tecnico" type="text" maxlength="100" class="form-input" value={v.tecnico} />
+          {erros.tecnico && <span class="form-error">{erros.tecnico}</span>}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="a-valor">Valor total (R$)</label>
+          <input id="a-valor" name="valor" type="text" inputmode="decimal" placeholder="280,00" class="form-input" value={v.valor} />
+          {erros.valor && <span class="form-error">{erros.valor}</span>}
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="a-previsao">Previsão de entrega</label>
+          <input id="a-previsao" name="previsaoEntrega" type="date" class="form-input" value={v.previsaoEntrega} />
+          {erros.previsaoEntrega && <span class="form-error">{erros.previsaoEntrega}</span>}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="a-laudo">Laudo técnico (visível ao cliente)</label>
+        <textarea id="a-laudo" name="laudo" maxlength="4000" class="form-textarea">{v.laudo}</textarea>
+        {erros.laudo && <span class="form-error">{erros.laudo}</span>}
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="a-evento">Adicionar à linha do tempo (visível ao cliente)</label>
+        <input id="a-evento" name="evento" type="text" maxlength="300" placeholder="Ex.: Orçamento aprovado pelo cliente via WhatsApp" class="form-input" value={v.evento} />
+        {erros.evento && <span class="form-error">{erros.evento}</span>}
+      </div>
+
+      <button type="submit" class="btn btn-primary">Salvar alterações</button>
+    </form>
+
+    <h2 style="font-size: 1.2rem; margin-bottom: 1rem;">Como o cliente vê</h2>
+    <OsDetalhe os={os} />
+  </section>
+</BaseLayout>

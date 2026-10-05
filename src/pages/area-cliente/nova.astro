@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import OsFormAparelho from '../../components/os/OsFormAparelho.astro';
+import { atorDe, repoOs } from '../../lib/sessao';
+import { ErroOs } from '../../lib/os';
+import { NovaOsClienteSchema, errosPorCampo, formParaObjeto } from '../../scripts/validation';
+import '../../styles/os.css';
+
+export const prerender = false;
+
+const ator = atorDe(Astro.locals.user);
+if (!ator || !ator.emailVerified) return Astro.redirect('/area-cliente', 303);
+
+let valores: Record<string, string> = {};
+let erros: Record<string, string> = {};
+let erroGeral = '';
+
+if (Astro.request.method === 'POST') {
+  valores = formParaObjeto(await Astro.request.formData());
+  const resultado = NovaOsClienteSchema.safeParse(valores);
+  if (!resultado.success) {
+    erros = errosPorCampo(resultado.error);
+    Astro.response.status = 400;
+  } else {
+    try {
+      const os = await repoOs.criarPeloCliente(ator, resultado.data);
+      return Astro.redirect(`/area-cliente/os/${encodeURIComponent(os.id)}?criada=1`, 303);
+    } catch (e) {
+      if (!(e instanceof ErroOs)) throw e;
+      erroGeral = e.message;
+      Astro.response.status = e.codigo === 'limite_diario' ? 429 : 400;
+    }
+  }
+}
+---
+
+<BaseLayout title="Abrir Ordem de Serviço | CamargoTech" description="Abra uma ordem de serviço na CamargoTech." activePage="area-cliente">
+  <div class="section-head" style="padding-top: 4rem;">
+    <span class="badge badge-orange">Nova OS</span>
+    <h1>Abrir Ordem de Serviço</h1>
+    <p>Conte o que está acontecendo. A equipe analisa e entra em contato pelo WhatsApp com o orçamento.</p>
+  </div>
+
+  <section class="container os-page" style="max-width: 760px;">
+    <a href="/area-cliente" class="os-back">← Voltar para minhas OS</a>
+    {erroGeral && <p class="os-notice" role="alert">{erroGeral}</p>}
+
+    <form method="POST" class="card os-form" novalidate>
+      <p class="os-client-name">Cliente: <strong>{ator.name}</strong> ({ator.email})</p>
+
+      <OsFormAparelho valores={valores} erros={erros} />
+
+      <div class="form-group">
+        <label class="os-check">
+          <input type="checkbox" name="lgpd" required checked={valores.lgpd === 'on'} />
+          <span>Concordo com o tratamento dos meus dados para atendimento desta OS, conforme a <a href="/politica-privacidade" target="_blank" rel="noopener">Política de Privacidade (LGPD)</a>.</span>
+        </label>
+        {erros.lgpd && <span class="form-error">{erros.lgpd}</span>}
+      </div>
+
+      <button type="submit" class="btn btn-primary">Enviar ordem de serviço</button>
+    </form>
+  </section>
+</BaseLayout>
