@@ -14,7 +14,15 @@ type Fetch = typeof fetch;
 
 const TIMEOUT_MS = 4000;
 const TTL_MS = 24 * 60 * 60 * 1000;
+// Cache limitado: Map mantém a ordem de inserção, então o primeiro é o mais antigo.
+const MAX_CACHE = 2000;
 const cache = new Map<string, { ate: number; resultado: ResultadoCep }>();
+
+function guardar(cep: string, resultado: ResultadoCep) {
+  cache.delete(cep);
+  if (cache.size >= MAX_CACHE) cache.delete(cache.keys().next().value!);
+  cache.set(cep, { ate: Date.now() + TTL_MS, resultado });
+}
 
 export function limparCep(cep: string): string | null {
   const limpo = cep.replace(/\D/g, '');
@@ -81,11 +89,32 @@ export async function consultarCep(cepEntrada: string, fetchImpl: Fetch = fetch)
       return { status: 'indisponivel' }; // não guarda falha em cache
     }
   }
-  cache.set(cep, { ate: Date.now() + TTL_MS, resultado });
+  guardar(cep, resultado);
   return resultado;
+}
+
+// Limite por visitante para o endpoint público /api/cep: evita que um script use o
+// site para martelar o ViaCEP (e o ViaCEP bloquear o servidor para todos).
+// Em memória, por instância: suficiente para uso abusivo casual.
+const JANELA_MS = 60_000;
+const MAX_POR_JANELA = 20;
+const acessos = new Map<string, { inicio: number; total: number }>();
+
+export function permitirConsulta(chave: string, agora = Date.now()): boolean {
+  const a = acessos.get(chave);
+  if (!a || agora - a.inicio >= JANELA_MS) {
+    if (acessos.size > 5000) acessos.clear();
+    acessos.set(chave, { inicio: agora, total: 1 });
+    return true;
+  }
+  a.total++;
+  return a.total <= MAX_POR_JANELA;
 }
 
 /** Só para testes. */
 export function _limparCacheCep() {
   cache.clear();
+  acessos.clear();
 }
+
+export const _tamanhoCacheCep = () => cache.size;

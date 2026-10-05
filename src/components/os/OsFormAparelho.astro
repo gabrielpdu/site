@@ -58,7 +58,7 @@ const cepInicial = cepDigitos.length > 5 ? `${cepDigitos.slice(0, 5)}-${cepDigit
     this.info = 'Consultando CEP...'; this.infoOk = true;
     try {
       const res = await fetch('/api/cep/' + d);
-      if (!res.ok) { this.info = res.status === 502 ? 'Não foi possível consultar o CEP agora.' : 'CEP não encontrado.'; this.infoOk = false; return; }
+      if (!res.ok) { this.info = res.status === 404 || res.status === 400 ? 'CEP não encontrado.' : 'Não foi possível consultar o CEP agora.'; this.infoOk = false; return; }
       const { endereco, cobertura } = await res.json();
       if (endereco.logradouro && !this.$refs.rua.value) this.$refs.rua.value = endereco.logradouro;
       if (endereco.bairro && !this.$refs.bairro.value) this.$refs.bairro.value = endereco.bairro;

@@ -14,7 +14,7 @@ const user = Astro.locals.user;
 const erro = Astro.url.searchParams.get('erro');
 // ?voltar=/area-cliente/nova?... → depois do login, segue para lá (só caminhos internos).
 const voltar = destinoAposLogin(Astro.url.searchParams.get('voltar'));
-if (user && voltar !== '/area-cliente') return Astro.redirect(voltar, 303);
+if (user?.emailVerified && voltar !== '/area-cliente') return Astro.redirect(voltar, 303);
 
 const ordens = ator?.emailVerified ? await repoOs.listarDoCliente(ator) : [];
 

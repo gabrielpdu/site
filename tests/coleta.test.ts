@@ -181,3 +181,36 @@ describe('endereço de coleta na OS', async () => {
     }
   });
 });
+
+describe('proteções do /api/cep e das migrações', async () => {
+  const { permitirConsulta, _tamanhoCacheCep } = await import('../src/lib/cep');
+  const { sqlDestrutivo, migracoesDestrutivas } = await import('../src/lib/db/migracoes');
+
+  beforeEach(() => _limparCacheCep());
+
+  it('limita consultas por visitante a 20/min', () => {
+    const t = 1_000_000;
+    for (let i = 0; i < 20; i++) assert.equal(permitirConsulta('1.2.3.4', t + i), true);
+    assert.equal(permitirConsulta('1.2.3.4', t + 30), false);
+    assert.equal(permitirConsulta('5.6.7.8', t + 30), true, 'outro visitante não é afetado');
+    assert.equal(permitirConsulta('1.2.3.4', t + 60_001), true, 'libera após a janela');
+  });
+
+  it('cache de CEP tem tamanho máximo', async () => {
+    const f = async () => new Response(JSON.stringify({ erro: 'true' }), { status: 200 });
+    for (let i = 0; i < 2100; i++) await consultarCep(String(10000000 + i), f);
+    assert.equal(_tamanhoCacheCep(), 2000);
+  });
+
+  it('detecta migrações destrutivas, ignora FK ON DELETE', () => {
+    assert.equal(sqlDestrutivo('REFERENCES "user"("id") ON DELETE cascade'), false);
+    assert.equal(sqlDestrutivo('ALTER TABLE "a" ADD COLUMN "b" text'), false);
+    for (const s of ['ALTER TABLE a DROP COLUMN b', 'DROP TABLE a', 'ALTER TABLE a RENAME COLUMN b TO c', 'ALTER TABLE a ALTER COLUMN b SET NOT NULL', 'DELETE FROM a', 'TRUNCATE a']) {
+      assert.equal(sqlDestrutivo(s), true, s);
+    }
+  });
+
+  it('migrações atuais são todas aditivas (preview pode aplicar)', () => {
+    assert.deepEqual(migracoesDestrutivas('./drizzle'), []);
+  });
+});

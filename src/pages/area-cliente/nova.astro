@@ -10,10 +10,12 @@ import '../../styles/os.css';
 export const prerender = false;
 
 const ator = atorDe(Astro.locals.user);
-if (!ator || !ator.emailVerified) {
+if (!ator) {
   // Depois do login, volta para este formulário com o que veio na URL (ex.: CEP da simulação de coleta).
   return Astro.redirect('/area-cliente?voltar=' + encodeURIComponent(Astro.url.pathname + Astro.url.search), 303);
 }
+// Logado sem e-mail verificado: sem `voltar`, senão /area-cliente devolveria para cá (loop).
+if (!ator.emailVerified) return Astro.redirect('/area-cliente', 303);
 
 // Pré-preenchimento vindo da simulação de coleta em /contato (?atendimento=coleta&cep=...).
 let valores: Record<string, string> = {
