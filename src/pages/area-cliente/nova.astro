@@ -3,15 +3,25 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import OsFormAparelho from '../../components/os/OsFormAparelho.astro';
 import { atorDe, repoOs } from '../../lib/sessao';
 import { ErroOs } from '../../lib/os';
+import { resolverEnderecoColeta } from '../../lib/endereco-coleta';
 import { NovaOsClienteSchema, errosPorCampo, formParaObjeto } from '../../scripts/validation';
 import '../../styles/os.css';
 
 export const prerender = false;
 
 const ator = atorDe(Astro.locals.user);
-if (!ator || !ator.emailVerified) return Astro.redirect('/area-cliente', 303);
+if (!ator) {
+  // Depois do login, volta para este formulário com o que veio na URL (ex.: CEP da simulação de coleta).
+  return Astro.redirect('/area-cliente?voltar=' + encodeURIComponent(Astro.url.pathname + Astro.url.search), 303);
+}
+// Logado sem e-mail verificado: sem `voltar`, senão /area-cliente devolveria para cá (loop).
+if (!ator.emailVerified) return Astro.redirect('/area-cliente', 303);
 
-let valores: Record<string, string> = {};
+// Pré-preenchimento vindo da simulação de coleta em /contato (?atendimento=coleta&cep=...).
+let valores: Record<string, string> = {
+  atendimento: Astro.url.searchParams.get('atendimento') === 'coleta' ? 'coleta' : 'balcao',
+  cep: (Astro.url.searchParams.get('cep') ?? '').replace(/\D/g, '').slice(0, 8),
+};
 let erros: Record<string, string> = {};
 let erroGeral = '';
 
@@ -22,13 +32,23 @@ if (Astro.request.method === 'POST') {
     erros = errosPorCampo(resultado.error);
     Astro.response.status = 400;
   } else {
-    try {
-      const os = await repoOs.criarPeloCliente(ator, resultado.data);
-      return Astro.redirect(`/area-cliente/os/${encodeURIComponent(os.id)}?criada=1`, 303);
-    } catch (e) {
-      if (!(e instanceof ErroOs)) throw e;
-      erroGeral = e.message;
-      Astro.response.status = e.codigo === 'limite_diario' ? 429 : 400;
+    // Coleta: CEP precisa existir e estar na área atendida (conferido no servidor).
+    const endereco =
+      resultado.data.atendimento === 'coleta'
+        ? await resolverEnderecoColeta(resultado.data, { exigirCobertura: true })
+        : null;
+    if (endereco && !endereco.ok) {
+      erros = { [endereco.campo]: endereco.mensagem };
+      Astro.response.status = 400;
+    } else {
+      try {
+        const os = await repoOs.criarPeloCliente(ator, resultado.data, endereco?.endereco ?? null);
+        return Astro.redirect(`/area-cliente/os/${encodeURIComponent(os.id)}?criada=1`, 303);
+      } catch (e) {
+        if (!(e instanceof ErroOs)) throw e;
+        erroGeral = e.message;
+        Astro.response.status = e.codigo === 'limite_diario' ? 429 : 400;
+      }
     }
   }
 }

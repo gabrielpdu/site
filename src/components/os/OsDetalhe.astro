@@ -56,6 +56,13 @@ const whatsapp = `https://wa.me/5544988424935?text=${encodeURIComponent(`Olá! G
     <h4>Defeito Relatado</h4>
     <p>{os.defeito}</p>
     <p><small>Atendimento: {ATENDIMENTO_LABEL[os.atendimento]}</small></p>
+    {os.atendimento === 'coleta' && os.cep && (
+      <p><small>
+        Endereço de coleta: {[os.logradouro, os.numero].filter(Boolean).join(', ')}
+        {os.complemento && ` (${os.complemento})`}
+        {` - ${os.bairro ?? ''}`}{os.cidade && ` - ${os.cidade}/${os.uf}`} · CEP {os.cep.replace(/^(\d{5})(\d{3})$/, '$1-$2')}
+      </small></p>
+    )}
   </div>
 
   {os.laudo && (

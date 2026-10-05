@@ -3,6 +3,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import OsFormAparelho from '../../components/os/OsFormAparelho.astro';
 import { atorDe, repoOs } from '../../lib/sessao';
 import { NovaOsAdminSchema, errosPorCampo, formParaObjeto } from '../../scripts/validation';
+import { resolverEnderecoColeta } from '../../lib/endereco-coleta';
 import '../../styles/os.css';
 
 export const prerender = false;
@@ -17,12 +18,23 @@ let erros: Record<string, string> = {};
 if (Astro.request.method === 'POST') {
   valores = formParaObjeto(await Astro.request.formData());
   const resultado = NovaOsAdminSchema.safeParse(valores);
-  if (resultado.success) {
-    const os = await repoOs.criarPeloAdmin(ator, resultado.data);
-    return Astro.redirect(`/admin/os/${encodeURIComponent(os.id)}?criada=1`, 303);
+  if (!resultado.success) {
+    erros = errosPorCampo(resultado.error);
+    Astro.response.status = 400;
+  } else {
+    // A equipe pode registrar coleta fora da área (combinado à parte), mas o CEP precisa existir.
+    const endereco =
+      resultado.data.atendimento === 'coleta'
+        ? await resolverEnderecoColeta(resultado.data, { exigirCobertura: false })
+        : null;
+    if (endereco && !endereco.ok) {
+      erros = { [endereco.campo]: endereco.mensagem };
+      Astro.response.status = 400;
+    } else {
+      const os = await repoOs.criarPeloAdmin(ator, resultado.data, endereco?.endereco ?? null);
+      return Astro.redirect(`/admin/os/${encodeURIComponent(os.id)}?criada=1`, 303);
+    }
   }
-  erros = errosPorCampo(resultado.error);
-  Astro.response.status = 400;
 }
 ---
 

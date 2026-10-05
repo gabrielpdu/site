@@ -5,6 +5,7 @@ import { and, asc, desc, eq, gte, ilike, or, sql } from 'drizzle-orm';
 import type { Db } from './db/client';
 import { historicoOs, ordensServico, type HistoricoOs, type OrdemServico } from './db/schema';
 import type { AtualizarOs, NovaOsAdmin, NovaOsCliente } from '../scripts/validation';
+import type { EnderecoColeta } from './endereco-coleta';
 
 export const LIMITE_OS_POR_DIA = 5;
 
@@ -37,6 +38,11 @@ function exigirEmailVerificado(ator: Ator) {
 
 function exigirAdmin(ator: Ator) {
   if (!ator.admin || !ator.emailVerified) throw new ErroOs('sem_permissao', 'Acesso restrito à equipe.');
+}
+
+/** Grava o endereço só quando o atendimento é coleta (ignora sobras do formulário). */
+function enderecoSeColeta(atendimento: string, endereco: EnderecoColeta | null) {
+  return atendimento === 'coleta' && endereco ? endereco : {};
 }
 
 export function criarRepositorioOs(db: Db) {
@@ -73,7 +79,7 @@ export function criarRepositorioOs(db: Db) {
       return { ...os, historico: await historicoDe(os.id) };
     },
 
-    async criarPeloCliente(ator: Ator, dados: NovaOsCliente): Promise<OrdemServico> {
+    async criarPeloCliente(ator: Ator, dados: NovaOsCliente, endereco: EnderecoColeta | null = null): Promise<OrdemServico> {
       exigirEmailVerificado(ator);
       const email = emailDe(ator);
       const umDiaAtras = new Date(Date.now() - 24 * 60 * 60 * 1000);
@@ -104,10 +110,16 @@ export function criarRepositorioOs(db: Db) {
           marcaModelo: dados.marcaModelo,
           defeito: dados.defeito,
           atendimento: dados.atendimento,
+          ...enderecoSeColeta(dados.atendimento, endereco),
           criadoPor: 'cliente',
         })
         .returning();
-      await registrarEvento(os.id, 'OS aberta pelo cliente no site. Aguardando análise da equipe.');
+      await registrarEvento(
+        os.id,
+        dados.atendimento === 'coleta'
+          ? 'OS aberta pelo cliente no site com pedido de coleta por motoboy. Aguardando contato da equipe.'
+          : 'OS aberta pelo cliente no site. Aguardando análise da equipe.'
+      );
       return os;
     },
 
@@ -136,7 +148,7 @@ export function criarRepositorioOs(db: Db) {
         .limit(200);
     },
 
-    async criarPeloAdmin(ator: Ator, dados: NovaOsAdmin): Promise<OrdemServico> {
+    async criarPeloAdmin(ator: Ator, dados: NovaOsAdmin, endereco: EnderecoColeta | null = null): Promise<OrdemServico> {
       exigirAdmin(ator);
       const [os] = await db
         .insert(ordensServico)
@@ -148,6 +160,7 @@ export function criarRepositorioOs(db: Db) {
           marcaModelo: dados.marcaModelo,
           defeito: dados.defeito,
           atendimento: dados.atendimento,
+          ...enderecoSeColeta(dados.atendimento, endereco),
           status: 'Diagnóstico',
           criadoPor: 'admin',
         })

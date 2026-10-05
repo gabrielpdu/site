@@ -2,6 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactForm from '../components/ContactForm.astro';
 import Map from '../components/Map.astro';
+import { cidadesAtendidasTexto } from '../lib/coleta';
+
+const WHATSAPP = '5544988424935';
 ---
 
 <BaseLayout 
@@ -64,49 +67,115 @@ import Map from '../components/Map.astro';
           </div>
         </div>
 
-        <!-- Coleta Expressa com consulta de CEP -->
-        <div class="card detail-card cep-calculator" x-data="{ cep: '', address: null, loading: false, error: false,
-          async checkCep() {
-            const clean = this.cep.replace(/\D/g, '');
-            if (clean.length !== 8) return;
-            this.loading = true;
-            this.error = false;
+        <!-- Coleta por motoboy: consulta de CEP no servidor (/api/cep) + regras de src/lib/coleta.ts -->
+        <div class="card detail-card cep-calculator" x-data={`{
+          cep: '', status: 'idle', endereco: null, cobertura: null, ultimo: '', ctrl: null,
+          whatsapp: '${WHATSAPP}', area: '${cidadesAtendidasTexto()}',
+          mascara(v) {
+            const d = v.replace(/\\D/g, '').slice(0, 8);
+            this.cep = d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d;
+            if (d.length === 8) this.consultar();
+            else if (this.status !== 'idle') { this.status = 'idle'; this.ultimo = ''; }
+          },
+          async consultar() {
+            const d = this.cep.replace(/\\D/g, '');
+            if (d.length !== 8) { this.status = 'invalido'; return; }
+            if (d === this.ultimo && this.status !== 'erro') return;
+            this.ultimo = d;
+            this.ctrl?.abort();
+            const ctrl = (this.ctrl = new AbortController());
+            this.status = 'loading';
+            this.endereco = null;
+            this.cobertura = null;
             try {
-              const res = await fetch(`https://viacep.com.br/ws/${clean}/json/`);
+              const res = await fetch('/api/cep/' + d, { signal: ctrl.signal });
+              if (res.status === 404 || res.status === 400) { this.status = 'inexistente'; return; }
+              if (!res.ok) throw new Error('HTTP ' + res.status);
               const data = await res.json();
-              if (data.erro) {
-                this.error = true;
-                this.address = null;
-              } else {
-                this.address = data;
-              }
+              this.endereco = data.endereco;
+              this.cobertura = data.cobertura;
+              this.status = data.cobertura.atendido ? 'atendido' : 'fora';
             } catch (e) {
-              this.error = true;
-            } finally {
-              this.loading = false;
+              if (e.name !== 'AbortError') this.status = 'erro';
             }
-          }
-        }">
+          },
+          get enderecoTexto() {
+            const e = this.endereco;
+            if (!e) return '';
+            const rua = [e.logradouro, e.bairro].filter(Boolean).join(', ');
+            return (rua ? rua + ' - ' : '') + e.cidade + '/' + e.uf;
+          },
+          get prazoTexto() {
+            const p = this.cobertura?.previsao;
+            return p ? (p.hoje ? 'Coleta hoje' : 'Coleta ' + p.rotulo) : '';
+          },
+          get taxaTexto() {
+            const t = this.cobertura?.taxaCentavos ?? 0;
+            return t === 0 ? 'Coleta grátis' : 'Taxa de coleta: ' + (t / 100).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+          },
+          linkWhats(texto) { return 'https://wa.me/' + this.whatsapp + '?text=' + encodeURIComponent(texto); },
+          get whatsColeta() {
+            return this.linkWhats('Olá! Quero solicitar a coleta por motoboy. CEP ' + this.cep + ' (' + this.enderecoTexto + '). Previsão: ' + this.prazoTexto.toLowerCase() + '.');
+          },
+          get whatsCorreios() {
+            return this.linkWhats('Olá! Moro em ' + (this.endereco ? this.endereco.cidade + '/' + this.endereco.uf : 'outra cidade') + ' (CEP ' + this.cep + ') e gostaria de enviar meu aparelho pelos Correios para conserto.');
+          },
+          get linkOs() { return '/area-cliente/nova?atendimento=coleta&cep=' + this.cep.replace(/\\D/g, ''); }
+        }`}>
           <h3>Simular Coleta por Motoboy</h3>
-          <p>Consulte se o seu CEP é atendido pelo nosso serviço de busca e entrega expressa.</p>
-          <div class="cep-input-group">
-            <input 
-              type="text" 
-              x-model="cep" 
-              @input="if (cep.length >= 8) checkCep()" 
-              class="form-input" 
-              placeholder="Digite seu CEP (Ex: 87140-000)" 
+          <p>Digite seu CEP para ver se buscamos e entregamos o aparelho na sua casa. Atendemos {cidadesAtendidasTexto()}.</p>
+          <form class="cep-input-group" @submit.prevent="consultar()">
+            <label for="cep-coleta" class="sr-only">CEP</label>
+            <input
+              id="cep-coleta"
+              type="text"
+              inputmode="numeric"
+              autocomplete="postal-code"
+              :value="cep"
+              @input="mascara($event.target.value); $event.target.value = cep"
+              class="form-input"
+              placeholder="Digite seu CEP (Ex: 87140-000)"
               maxlength="9"
             />
-            <button type="button" @click="checkCep()" class="btn btn-outline">Consultar</button>
-          </div>
-          <div x-show="loading" class="cep-result" x-cloak>Buscando endereço...</div>
-          <div x-show="address" class="cep-result cep-success" x-cloak>
-            <span>✓ Atendido por coleta expressa:</span>
-            <strong x-text="`${address?.logradouro || ''}, ${address?.bairro || ''} - ${address?.localidade || ''}/${address?.uf || ''}`"></strong>
-          </div>
-          <div x-show="error" class="cep-result cep-error" x-cloak>
-            CEP não localizado. Verifique e tente novamente.
+            <button type="submit" class="btn btn-outline" :disabled="status === 'loading'">Consultar</button>
+          </form>
+
+          <div class="cep-result-area" aria-live="polite">
+            <p x-show="status === 'loading'" class="cep-result" x-cloak>Consultando CEP...</p>
+
+            <div x-show="status === 'atendido'" class="cep-result cep-success" x-cloak>
+              <span>✓ Atendemos seu endereço</span>
+              <strong x-text="enderecoTexto"></strong>
+              <ul class="cep-facts">
+                <li x-text="taxaTexto"></li>
+                <li x-text="prazoTexto"></li>
+              </ul>
+              <small class="cep-note">Pedidos até 15h (sábado até 11h) são coletados no mesmo dia.</small>
+              <div class="cep-actions">
+                <a :href="whatsColeta" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">Solicitar coleta pelo WhatsApp</a>
+                <a :href="linkOs" class="btn btn-outline">Abrir OS com coleta</a>
+              </div>
+            </div>
+
+            <div x-show="status === 'fora'" class="cep-result cep-warning" x-cloak>
+              <span>Ainda não fazemos coleta por motoboy em <strong x-text="endereco ? endereco.cidade + '/' + endereco.uf : ''"></strong>.</span>
+              <p>Você pode enviar o aparelho pelos <strong>Correios ou transportadora</strong>: combinamos a embalagem e o envio pelo WhatsApp.</p>
+              <div class="cep-actions">
+                <a :href="whatsCorreios" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">Combinar envio pelo WhatsApp</a>
+              </div>
+            </div>
+
+            <p x-show="status === 'inexistente' || status === 'invalido'" class="cep-result cep-error" x-cloak>
+              CEP não encontrado. Confira os 8 dígitos e tente novamente.
+            </p>
+
+            <div x-show="status === 'erro'" class="cep-result cep-error" x-cloak>
+              <p>Não conseguimos consultar o CEP agora. Tente novamente em instantes ou fale com a gente.</p>
+              <div class="cep-actions">
+                <button type="button" class="btn btn-outline" @click="consultar()">Tentar novamente</button>
+                <a :href="linkWhats('Olá! Quero saber se vocês fazem coleta no CEP ' + cep + '.')" target="_blank" rel="noopener noreferrer" class="btn btn-whatsapp">WhatsApp</a>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -215,6 +284,55 @@ import Map from '../components/Map.astro';
 
   .cep-error {
     color: var(--ct-error);
+  }
+
+  .cep-warning {
+    color: var(--ct-orange-400);
+  }
+
+  .cep-warning p,
+  .cep-error p {
+    color: var(--ct-text-muted);
+    margin-top: 0.35rem;
+  }
+
+  .cep-warning strong {
+    color: var(--ct-text-main);
+  }
+
+  .cep-facts {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0.25rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .cep-facts li {
+    background: rgba(20, 184, 122, 0.15);
+    color: var(--ct-green-400);
+    border-radius: var(--ct-radius-full);
+    padding: 0.2rem 0.7rem;
+    font-weight: 700;
+    font-size: 0.82rem;
+  }
+
+  .cep-note {
+    display: block;
+    color: var(--ct-text-muted);
+  }
+
+  .cep-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.75rem;
+  }
+
+  .cep-actions .btn {
+    font-size: 0.88rem;
+    padding: 0.55rem 0.9rem;
   }
 
   @media (max-width: 900px) {

@@ -1,6 +1,7 @@
 ---
 // Campos comuns aos formulários de abertura de OS (cliente e admin).
 import { APARELHO_LABEL, ATENDIMENTO_LABEL } from '../../lib/formato';
+import { cidadesAtendidasTexto } from '../../lib/coleta';
 
 interface Props {
   valores?: Record<string, string>;
@@ -9,7 +10,9 @@ interface Props {
 
 const { valores = {}, erros = {} } = Astro.props;
 const aparelho = valores.aparelho ?? 'celular';
-const atendimento = valores.atendimento ?? 'balcao';
+const atendimento = valores.atendimento === 'coleta' ? 'coleta' : 'balcao';
+const cepDigitos = (valores.cep ?? '').replace(/\D/g, '').slice(0, 8);
+const cepInicial = cepDigitos.length > 5 ? `${cepDigitos.slice(0, 5)}-${cepDigitos.slice(5)}` : cepDigitos;
 ---
 
 <div class="grid-2">
@@ -39,15 +42,79 @@ const atendimento = valores.atendimento ?? 'balcao';
   {erros.defeito && <span class="form-error">{erros.defeito}</span>}
 </div>
 
-<fieldset class="form-group">
-  <legend class="form-label">Forma de atendimento *</legend>
-  <div class="os-radio-group">
-    {Object.entries(ATENDIMENTO_LABEL).map(([v, label]) => (
-      <label class="os-check">
-        <input type="radio" name="atendimento" value={v} checked={v === atendimento} required />
-        <span>{label}</span>
-      </label>
-    ))}
-  </div>
-  {erros.atendimento && <span class="form-error">{erros.atendimento}</span>}
-</fieldset>
+<div x-data={`{
+  atendimento: ${JSON.stringify(atendimento)},
+  cep: ${JSON.stringify(cepInicial)},
+  info: '', infoOk: true, ultimo: '',
+  mascara(v) {
+    const d = v.replace(/\\D/g, '').slice(0, 8);
+    this.cep = d.length > 5 ? d.slice(0, 5) + '-' + d.slice(5) : d;
+    if (d.length === 8) this.buscar(); else this.info = '';
+  },
+  async buscar() {
+    const d = this.cep.replace(/\\D/g, '');
+    if (d.length !== 8 || d === this.ultimo) return;
+    this.ultimo = d;
+    this.info = 'Consultando CEP...'; this.infoOk = true;
+    try {
+      const res = await fetch('/api/cep/' + d);
+      if (!res.ok) { this.info = res.status === 404 || res.status === 400 ? 'CEP não encontrado.' : 'Não foi possível consultar o CEP agora.'; this.infoOk = false; return; }
+      const { endereco, cobertura } = await res.json();
+      if (endereco.logradouro && !this.$refs.rua.value) this.$refs.rua.value = endereco.logradouro;
+      if (endereco.bairro && !this.$refs.bairro.value) this.$refs.bairro.value = endereco.bairro;
+      this.infoOk = cobertura.atendido;
+      this.info = endereco.cidade + '/' + endereco.uf + (cobertura.atendido
+        ? ' · coleta grátis · ' + (cobertura.previsao.hoje ? 'coleta hoje' : 'coleta ' + cobertura.previsao.rotulo)
+        : ' · fora da área de coleta (atendemos ' + ${JSON.stringify(cidadesAtendidasTexto())} + ')');
+      if (!endereco.logradouro) this.$refs.rua.focus(); else this.$refs.numero.focus();
+    } catch { this.info = 'Não foi possível consultar o CEP agora.'; this.infoOk = false; }
+  }
+}`} x-init="if (atendimento === 'coleta' && cep.length === 9) buscar()">
+  <fieldset class="form-group">
+    <legend class="form-label">Forma de atendimento *</legend>
+    <div class="os-radio-group">
+      {Object.entries(ATENDIMENTO_LABEL).map(([v, label]) => (
+        <label class="os-check">
+          <input type="radio" name="atendimento" value={v} checked={v === atendimento} required x-model="atendimento" />
+          <span>{label}</span>
+        </label>
+      ))}
+    </div>
+    {erros.atendimento && <span class="form-error">{erros.atendimento}</span>}
+  </fieldset>
+
+  <fieldset class="form-group os-endereco" x-show="atendimento === 'coleta'" x-cloak>
+    <legend class="form-label">Endereço para coleta (motoboy)</legend>
+    <p class="os-endereco-ajuda">Coleta grátis em {cidadesAtendidasTexto()}. Pedidos até 15h (sábado até 11h) são coletados no mesmo dia.</p>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label" for="os-cep">CEP *</label>
+        <input id="os-cep" name="cep" type="text" inputmode="numeric" autocomplete="postal-code" maxlength="9" class="form-input" placeholder="87140-000"
+          :value="cep" @input="mascara($event.target.value); $event.target.value = cep" value={cepInicial} aria-invalid={erros.cep ? 'true' : undefined} aria-describedby="os-cep-info" />
+        <small id="os-cep-info" aria-live="polite" x-text="info" :class="infoOk ? 'os-cep-ok' : 'os-cep-erro'"></small>
+        {erros.cep && <span class="form-error">{erros.cep}</span>}
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="os-bairro">Bairro *</label>
+        <input id="os-bairro" x-ref="bairro" name="bairro" type="text" maxlength="100" class="form-input" autocomplete="address-level3" value={valores.bairro ?? ''} aria-invalid={erros.bairro ? 'true' : undefined} />
+        {erros.bairro && <span class="form-error">{erros.bairro}</span>}
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="os-rua">Rua *</label>
+      <input id="os-rua" x-ref="rua" name="logradouro" type="text" maxlength="150" class="form-input" autocomplete="address-line1" value={valores.logradouro ?? ''} aria-invalid={erros.logradouro ? 'true' : undefined} />
+      {erros.logradouro && <span class="form-error">{erros.logradouro}</span>}
+    </div>
+    <div class="grid-2">
+      <div class="form-group">
+        <label class="form-label" for="os-numero">Número *</label>
+        <input id="os-numero" x-ref="numero" name="numero" type="text" maxlength="20" class="form-input" placeholder="123 ou s/n" value={valores.numero ?? ''} aria-invalid={erros.numero ? 'true' : undefined} />
+        {erros.numero && <span class="form-error">{erros.numero}</span>}
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="os-complemento">Complemento</label>
+        <input id="os-complemento" name="complemento" type="text" maxlength="100" class="form-input" placeholder="Apto, bloco, referência" value={valores.complemento ?? ''} />
+      </div>
+    </div>
+  </fieldset>
+</div>

@@ -381,3 +381,23 @@ fieldset.form-group {
     flex-direction: column;
   }
 }
+
+/* Endereço de coleta no formulário de OS */
+fieldset.os-endereco {
+  border-left: 3px solid var(--ct-orange-500);
+  padding-left: 1rem;
+}
+
+.os-endereco-ajuda {
+  color: var(--ct-text-muted);
+  font-size: 0.88rem;
+  margin-bottom: 0.75rem;
+}
+
+.os-cep-ok {
+  color: var(--ct-green-400);
+}
+
+.os-cep-erro {
+  color: var(--ct-orange-400);
+}
