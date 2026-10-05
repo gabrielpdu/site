@@ -9,6 +9,7 @@
     "dev:host": "astro dev --host 0.0.0.0 --port 4321",
     "start": "astro dev --port 4321",
     "build": "astro build",
+    "vercel-build": "node --import tsx scripts/migrate.ts --somente-producao && astro build",
     "preview": "astro preview --host 0.0.0.0 --port 4321",
     "check": "astro check",
     "test": "node --env-file-if-exists=.env.local --import tsx --test tests/*.test.ts",

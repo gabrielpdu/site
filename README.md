@@ -81,15 +81,12 @@ npm run build
      - URIs de redirecionamento: `https://techcamargo.com.br/api/auth/callback/google` e `http://localhost:4321/api/auth/callback/google`
 2. **Vercel** → projeto → *Storage* → **Create Database → Neon (Postgres)** e conecte ao projeto (cria `DATABASE_URL`).
 3. **Vercel → Settings → Environment Variables** (Production e Preview):
-   `BETTER_AUTH_SECRET` (gere com `openssl rand -base64 32`), `BETTER_AUTH_URL=https://techcamargo.com.br`,
-   `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, `ADMIN_EMAILS=seu@gmail.com,outro@gmail.com`.
-4. Aplique as migrações no Neon (uma vez, e a cada nova migração):
-   ```bash
-   npx vercel env pull .env.production.local
-   ```
-   ```bash
-   node --env-file=.env.production.local --import tsx scripts/migrate.ts
-   ```
+   `BETTER_AUTH_SECRET` (gere com `openssl rand -base64 32`), `BETTER_AUTH_URL=https://www.techcamargo.com.br`
+   (o domínio sem www redireciona para o www), `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`,
+   `ADMIN_EMAILS=seu@gmail.com,outro@gmail.com`.
+4. **Migrações:** rodam sozinhas no deploy de **produção** (script `vercel-build`). Previews pulam essa
+   etapa porque compartilham o mesmo banco. Se a migração falhar, o deploy falha e a versão anterior
+   continua no ar.
 5. Faça o deploy e teste: entrar com Google → abrir OS → ver no `/admin`.
 
 ---
