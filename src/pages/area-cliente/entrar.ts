@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { auth, googleConfigurado } from '../../lib/auth';
+import { destinoAposLogin } from '../../lib/voltar';
 
 export const prerender = false;
 
@@ -8,11 +9,16 @@ export const prerender = false;
 export const POST: APIRoute = async ({ request, redirect }) => {
   if (!googleConfigurado) return redirect('/area-cliente?erro=config', 303);
 
+  // Volta para onde o cliente estava (ex.: formulário de OS com coleta), só dentro da Área do Cliente.
+  const form = await request.formData().catch(() => null);
+  const voltar = form?.get('voltar');
+  const callbackURL = destinoAposLogin(typeof voltar === 'string' ? voltar : null);
+
   try {
     const { headers, response } = await auth.api.signInSocial({
       body: {
         provider: 'google',
-        callbackURL: '/area-cliente',
+        callbackURL,
         errorCallbackURL: '/area-cliente?erro=login',
       },
       headers: request.headers,

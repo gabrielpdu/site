@@ -4,6 +4,7 @@ import StatusPill from '../../components/os/StatusPill.astro';
 import { googleConfigurado } from '../../lib/auth';
 import { atorDe, repoOs } from '../../lib/sessao';
 import { APARELHO_LABEL, data } from '../../lib/formato';
+import { destinoAposLogin } from '../../lib/voltar';
 import '../../styles/os.css';
 
 export const prerender = false;
@@ -11,6 +12,9 @@ export const prerender = false;
 const ator = atorDe(Astro.locals.user);
 const user = Astro.locals.user;
 const erro = Astro.url.searchParams.get('erro');
+// ?voltar=/area-cliente/nova?... → depois do login, segue para lá (só caminhos internos).
+const voltar = destinoAposLogin(Astro.url.searchParams.get('voltar'));
+if (user && voltar !== '/area-cliente') return Astro.redirect(voltar, 303);
 
 const ordens = ator?.emailVerified ? await repoOs.listarDoCliente(ator) : [];
 
@@ -39,6 +43,7 @@ const mensagensErro: Record<string, string> = {
         <h2>Entre para ver suas ordens de serviço</h2>
         <p>Use a mesma conta Google (Gmail) informada no balcão. Assim suas OS aparecem automaticamente, e você também pode abrir novas.</p>
         <form method="POST" action="/area-cliente/entrar">
+          {voltar !== '/area-cliente' && <input type="hidden" name="voltar" value={voltar} />}
           <button type="submit" class="btn-google">
             <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>

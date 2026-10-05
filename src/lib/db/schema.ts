@@ -123,6 +123,15 @@ export const ordensServico = pgTable(
     marcaModelo: text('marca_modelo').notNull(),
     defeito: text('defeito').notNull(),
     atendimento: text('atendimento', { enum: ATENDIMENTOS }).notNull().default('balcao'),
+    // Endereço de coleta (preenchido só quando atendimento = 'coleta').
+    // Cidade/UF vêm da consulta de CEP no servidor, não do navegador.
+    cep: text('cep'),
+    logradouro: text('logradouro'),
+    numero: text('numero'),
+    complemento: text('complemento'),
+    bairro: text('bairro'),
+    cidade: text('cidade'),
+    uf: text('uf'),
     status: text('status', { enum: STATUS_OS }).notNull().default('Aguardando análise'),
     percentual: integer('percentual').notNull().default(0),
     laudo: text('laudo'),

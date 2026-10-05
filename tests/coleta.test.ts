@@ -109,3 +109,75 @@ describe('consulta de CEP', () => {
     assert.equal(chamadas, 1);
   });
 });
+
+describe('endereço de coleta na OS', async () => {
+  const { resolverEnderecoColeta } = await import('../src/lib/endereco-coleta');
+  const { NovaOsClienteSchema } = await import('../src/scripts/validation');
+  const { destinoAposLogin } = await import('../src/lib/voltar');
+
+  beforeEach(() => _limparCacheCep());
+
+  const viaCep = (body: unknown) => async () => new Response(JSON.stringify(body), { status: 200 });
+  const PAICANDU = { logradouro: '', bairro: '', localidade: 'Paiçandu', uf: 'PR', ibge: '4117503' };
+  const MARINGA = { logradouro: 'Avenida Cerro Azul', bairro: 'Zona 02', localidade: 'Maringá', uf: 'PR', ibge: '4115200' };
+  const base = {
+    telefone: '(44) 99999-0000', aparelho: 'celular', marcaModelo: 'Moto G84',
+    defeito: 'Não carrega mais a bateria', lgpd: 'on',
+  };
+
+  it('coleta exige CEP, rua, número e bairro', () => {
+    const r = NovaOsClienteSchema.safeParse({ ...base, atendimento: 'coleta' });
+    assert.equal(r.success, false);
+    const campos = r.error!.issues.map((i) => i.path[0]).sort();
+    assert.deepEqual(campos, ['bairro', 'cep', 'logradouro', 'numero']);
+  });
+
+  it('balcão não exige endereço', () => {
+    assert.equal(NovaOsClienteSchema.safeParse({ ...base, atendimento: 'balcao' }).success, true);
+  });
+
+  it('CEP com máscara é normalizado', () => {
+    const r = NovaOsClienteSchema.parse({ ...base, atendimento: 'coleta', cep: '87140-000', logradouro: 'Rua A', numero: '10', bairro: 'Centro' });
+    assert.equal(r.cep, '87140000');
+  });
+
+  const dados = { cep: '87140000', logradouro: 'Rua das Flores', numero: '10', complemento: '', bairro: 'Centro' };
+
+  it('cliente em Paiçandu: aceito, cidade/UF vêm do CEP', async () => {
+    const r = await resolverEnderecoColeta(dados, { exigirCobertura: true, fetchImpl: viaCep(PAICANDU) });
+    assert.deepEqual(r, {
+      ok: true,
+      endereco: { cep: '87140000', logradouro: 'Rua das Flores', numero: '10', complemento: null, bairro: 'Centro', cidade: 'Paiçandu', uf: 'PR' },
+    });
+  });
+
+  it('cliente fora da área: recusado no servidor', async () => {
+    const r = await resolverEnderecoColeta({ ...dados, cep: '87010000' }, { exigirCobertura: true, fetchImpl: viaCep(MARINGA) });
+    assert.equal(r.ok, false);
+    assert.match(!r.ok ? r.mensagem : '', /Paiçandu/);
+  });
+
+  it('equipe pode registrar coleta fora da área', async () => {
+    const r = await resolverEnderecoColeta({ ...dados, cep: '87010000' }, { exigirCobertura: false, fetchImpl: viaCep(MARINGA) });
+    assert.equal(r.ok && r.endereco.cidade, 'Maringá');
+  });
+
+  it('CEP inexistente é recusado para todos', async () => {
+    const r = await resolverEnderecoColeta({ ...dados, cep: '99999999' }, { exigirCobertura: false, fetchImpl: viaCep({ erro: 'true' }) });
+    assert.equal(r.ok, false);
+  });
+
+  it('serviço de CEP fora: cliente recusado, equipe aceita sem cidade', async () => {
+    const fora = async () => { throw new TypeError('fetch failed'); };
+    assert.equal((await resolverEnderecoColeta(dados, { exigirCobertura: true, fetchImpl: fora })).ok, false);
+    const equipe = await resolverEnderecoColeta(dados, { exigirCobertura: false, fetchImpl: fora });
+    assert.equal(equipe.ok && equipe.endereco.cidade, null);
+  });
+
+  it('voltar após login só aceita caminhos da Área do Cliente', () => {
+    assert.equal(destinoAposLogin('/area-cliente/nova?atendimento=coleta&cep=87140000'), '/area-cliente/nova?atendimento=coleta&cep=87140000');
+    for (const ruim of ['//evil.com', 'https://evil.com', '/area-cliente/../admin', '/admin', '/area-cliente//evil.com', '/area-clienteX', null]) {
+      assert.equal(destinoAposLogin(ruim), '/area-cliente', String(ruim));
+    }
+  });
+});

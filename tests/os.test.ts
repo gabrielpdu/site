@@ -134,3 +134,20 @@ describe('validação', () => {
     assert.equal(AtualizarOsSchema.safeParse({ status: 'Em Reparo', percentual: '150' }).success, false);
   });
 });
+
+describe('OS com coleta', () => {
+  it('grava o endereço só quando o atendimento é coleta', async () => {
+    const repo = criarRepositorioOs(await createMigratedPgliteDb());
+    const cliente: Ator = { email: 'carla@exemplo.test', name: 'Carla', emailVerified: true, admin: false };
+    const endereco = { cep: '87140000', logradouro: 'Rua das Flores', numero: '10', complemento: null, bairro: 'Centro', cidade: 'Paiçandu', uf: 'PR' };
+
+    const coleta = await repo.criarPeloCliente(cliente, { ...novaOs, atendimento: 'coleta' }, endereco);
+    assert.equal(coleta.cep, '87140000');
+    assert.equal(coleta.cidade, 'Paiçandu');
+    const detalhe = await repo.buscar(coleta.id, cliente);
+    assert.match(detalhe!.historico[0].evento, /coleta por motoboy/);
+
+    const balcao = await repo.criarPeloCliente(cliente, { ...novaOs, atendimento: 'balcao' }, endereco);
+    assert.equal(balcao.cep, null, 'endereço ignorado quando não é coleta');
+  });
+});

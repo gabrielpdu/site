@@ -35,19 +35,52 @@ const camposAparelho = {
   atendimento: z.enum(['balcao', 'coleta'], { errorMap: () => ({ message: 'Escolha a forma de atendimento' }) }),
 };
 
+const opcional = (max: number) => z.string().trim().max(max, `Máximo de ${max} caracteres`).optional();
+
+// Endereço de coleta: opcional no schema, obrigatório quando atendimento = 'coleta'
+// (ver exigirEnderecoSeColeta). Cidade/UF não vêm do formulário: o servidor
+// obtém pela consulta do CEP.
+const camposEndereco = {
+  cep: z
+    .string()
+    .optional()
+    .transform((v) => (v ?? '').replace(/\D/g, '')),
+  logradouro: opcional(150),
+  numero: opcional(20),
+  complemento: opcional(100),
+  bairro: opcional(100),
+};
+
+function exigirEnderecoSeColeta(
+  d: { atendimento: string; cep: string; logradouro?: string; numero?: string; bairro?: string },
+  ctx: z.RefinementCtx
+) {
+  if (d.atendimento !== 'coleta') return;
+  if (!/^\d{8}$/.test(d.cep)) ctx.addIssue({ code: 'custom', path: ['cep'], message: 'Informe o CEP com 8 dígitos' });
+  if (!d.logradouro) ctx.addIssue({ code: 'custom', path: ['logradouro'], message: 'Informe a rua' });
+  if (!d.numero) ctx.addIssue({ code: 'custom', path: ['numero'], message: 'Informe o número (ou "s/n")' });
+  if (!d.bairro) ctx.addIssue({ code: 'custom', path: ['bairro'], message: 'Informe o bairro' });
+}
+
 /** OS aberta pelo próprio cliente logado. Nome/e-mail vêm da conta Google. */
-export const NovaOsClienteSchema = z.object({
-  ...camposAparelho,
-  lgpd: z.literal('on', { errorMap: () => ({ message: 'Você deve concordar com a Política de Privacidade (LGPD)' }) }),
-});
+export const NovaOsClienteSchema = z
+  .object({
+    ...camposAparelho,
+    ...camposEndereco,
+    lgpd: z.literal('on', { errorMap: () => ({ message: 'Você deve concordar com a Política de Privacidade (LGPD)' }) }),
+  })
+  .superRefine(exigirEnderecoSeColeta);
 export type NovaOsCliente = z.infer<typeof NovaOsClienteSchema>;
 
 /** OS cadastrada no balcão pelo admin, vinculada ao e-mail do cliente. */
-export const NovaOsAdminSchema = z.object({
-  ...camposAparelho,
-  clienteNome: texto(2, 100, 'Informe o nome do cliente'),
-  clienteEmail: z.string().trim().toLowerCase().email('Insira um e-mail válido').max(254),
-});
+export const NovaOsAdminSchema = z
+  .object({
+    ...camposAparelho,
+    ...camposEndereco,
+    clienteNome: texto(2, 100, 'Informe o nome do cliente'),
+    clienteEmail: z.string().trim().toLowerCase().email('Insira um e-mail válido').max(254),
+  })
+  .superRefine(exigirEnderecoSeColeta);
 export type NovaOsAdmin = z.infer<typeof NovaOsAdminSchema>;
 
 const STATUS_OS = [
