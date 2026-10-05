@@ -98,12 +98,22 @@ export async function consultarCep(cepEntrada: string, fetchImpl: Fetch = fetch)
 // Em memória, por instância: suficiente para uso abusivo casual.
 const JANELA_MS = 60_000;
 const MAX_POR_JANELA = 20;
+const MAX_VISITANTES = 5000;
 const acessos = new Map<string, { inicio: number; total: number }>();
 
-export function permitirConsulta(chave: string, agora = Date.now()): boolean {
+/** IPv6: agrupa pela rede /64 (um único cliente costuma ter a /64 inteira). */
+export function chaveVisitante(ip: string): string {
+  if (!ip.includes(':')) return ip;
+  return ip.split(':').slice(0, 4).join(':') + '::/64';
+}
+
+export function permitirConsulta(ip: string, agora = Date.now()): boolean {
+  const chave = chaveVisitante(ip);
   const a = acessos.get(chave);
   if (!a || agora - a.inicio >= JANELA_MS) {
-    if (acessos.size > 5000) acessos.clear();
+    acessos.delete(chave);
+    // Ao lotar, descarta só o mais antigo (nunca zera o contador de todos).
+    if (acessos.size >= MAX_VISITANTES) acessos.delete(acessos.keys().next().value!);
     acessos.set(chave, { inicio: agora, total: 1 });
     return true;
   }

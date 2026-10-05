@@ -102,12 +102,14 @@ export const AtualizarOsSchema = z.object({
   tecnico: z.preprocess(vazioParaUndefined, z.string().trim().max(100).optional()),
   laudo: z.preprocess(vazioParaUndefined, z.string().trim().max(4000).optional()),
   // Aceita "280", "280,00", "1.280,50" ou "R$ 280,00" → centavos.
+  // Até R$ 9.999.999,99 (cabe no integer do Postgres).
   valor: z.preprocess(
     vazioParaUndefined,
     z
       .string()
       .trim()
-      .regex(/^(R\$\s?)?\d{1,3}(\.?\d{3})*(,\d{1,2})?$/, 'Valor inválido (ex.: 280,00)')
+      .max(20, 'Valor inválido (ex.: 280,00)')
+      .regex(/^(R\$\s?)?\d{1,3}(\.?\d{3}){0,2}(,\d{1,2})?$/, 'Valor inválido (ex.: 280,00)')
       .transform((v) => {
         const [inteiro, dec = '0'] = v.replace(/^R\$\s?/, '').replace(/\./g, '').split(',');
         return Number(inteiro) * 100 + Number(dec.padEnd(2, '0'));
@@ -119,6 +121,12 @@ export const AtualizarOsSchema = z.object({
     z
       .string()
       .regex(/^\d{4}-\d{2}-\d{2}$/, 'Data inválida')
+      // Rejeita datas impossíveis (ex.: 2026-02-30) e anos fora do razoável.
+      .refine((d) => {
+        const [a, m, dia] = d.split('-').map(Number);
+        const dt = new Date(Date.UTC(a, m - 1, dia));
+        return a >= 2020 && a <= 2100 && dt.getUTCMonth() === m - 1 && dt.getUTCDate() === dia;
+      }, 'Data inválida')
       .transform((d) => new Date(`${d}T12:00:00-03:00`))
       .optional()
   ),
